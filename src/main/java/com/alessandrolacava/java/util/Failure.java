@@ -31,15 +31,16 @@ public final class Failure<T> extends Try<T> {
     }
 
     @Override
-    public void forEach(Consumer<? super T> action) {}
+    public void forEach(Consumer<? super T> action) {
+    }
 
     @Override
-    public <U> Try<? extends U> map(Function<? super T, ? extends U> mapper) {
+    public <U> Try<U> map(Function<? super T, ? extends U> mapper) {
         return (Try<U>) this;
     }
 
     @Override
-    public <U> Try<? extends U> flatMap(Function<? super T, ? extends Try<? extends U>> mapper) {
+    public <U> Try<U> flatMap(Function<? super T, ? extends Try<U>> mapper) {
         return (Try<U>) this;
     }
 
@@ -49,7 +50,7 @@ public final class Failure<T> extends Try<T> {
     }
 
     @Override
-    public <U> Try<? extends U> recover(Function<Exception, ? extends U> recoverFunction) {
+    public <U> Try<U> recover(Function<? super Exception, ? extends U> recoverFunction) {
         try {
             return Try.apply(() -> recoverFunction.apply(exception));
         } catch (Exception e) {
@@ -58,8 +59,12 @@ public final class Failure<T> extends Try<T> {
     }
 
     @Override
-    public <U> Try<? extends U> recoverWith(Function<Exception, Try<? extends U>> recoverFunction) {
-        return null;
+    public <U> Try<U> recoverWith(Function<? super Exception, ? extends Try<U>> recoverFunction) {
+        try {
+            return recoverFunction.apply(exception);
+        } catch (Exception e) {
+            return new Failure<>(e);
+        }
     }
 
     @Override

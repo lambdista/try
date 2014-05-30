@@ -18,15 +18,15 @@ public abstract class Try<T> {
 
     public abstract void forEach(Consumer<? super T> action);
 
-    public abstract <U> Try<? extends U> map(Function<? super T, ? extends U> mapper);
+    public abstract <U> Try<U> map(Function<? super T, ? extends U> mapper);
 
-    public abstract <U> Try<? extends U> flatMap(Function<? super T, ? extends Try<? extends U>> mapper);
+    public abstract <U> Try<U> flatMap(Function<? super T, ? extends Try<U>> mapper);
 
     public abstract Try<T> filter(Predicate<? super T> predicate);
 
-    public abstract <U> Try<? extends U> recover(Function<Exception, ? extends U> recoverFunction);
+    public abstract <U> Try<U> recover(Function<? super Exception, ? extends U> recoverFunction);
 
-    public abstract <U> Try<? extends U> recoverWith(Function<Exception, Try<? extends U>> recoverFunction);
+    public abstract <U> Try<U> recoverWith(Function<? super Exception, ? extends Try<U>> recoverFunction);
 
     public abstract Try<Exception> failed();
 
