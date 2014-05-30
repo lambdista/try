@@ -1,4 +1,4 @@
-package com.alessandrolacava.util;
+package com.alessandrolacava.java.util;
 
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;

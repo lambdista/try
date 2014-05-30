@@ -1,4 +1,4 @@
-package com.alessandrolacava.util;
+package com.alessandrolacava.java.util;
 
 import java.io.IOException;
 
@@ -12,10 +12,11 @@ public class Test {
         Try<Integer> result = Try.apply(
                 () -> test()
         );
-        System.out.println(result.map((Integer a) -> a.toString() + " hello world!").get());
+//        System.out.println(result.map((Integer a) -> a.toString() + " hello world!").get());
+        System.out.println(result.getOrElse(69));
     }
 
     public static Integer test() throws IOException {
-        return 42;
+        throw new IOException("antani");
     }
 }

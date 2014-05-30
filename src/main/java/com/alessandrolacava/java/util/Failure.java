@@ -1,4 +1,4 @@
-package com.alessandrolacava.util;
+package com.alessandrolacava.java.util;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
