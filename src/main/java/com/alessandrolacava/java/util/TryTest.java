@@ -1,6 +1,5 @@
 package com.alessandrolacava.java.util;
 
-import org.junit.*;
 import org.junit.Test;
 
 import java.util.NoSuchElementException;
@@ -166,7 +165,7 @@ public class TryTest {
         );
 
         Try<Integer> filteredResult = result.filter(
-                (Integer i) ->  i != 42
+                (Integer i) -> i != 42
         );
 
         // In this case calling get mush throw a NoSuchElementException since the Predicate in filter does not hold
@@ -176,23 +175,69 @@ public class TryTest {
     @Test
     public void testRecoverAgainstASuccess() throws Exception {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                () -> success()
         );
-        // TODO: To Fix
         Try<Integer> recoveredResult = result.recover(
                 (Exception e) -> {
                     if (e instanceof NumberFormatException) {
-                        return new Integer(42);
+                        return new Integer(84);
                     } else {
-                        return e;
+                        return new Integer(0);
                     }
                 }
         );
+        assertEquals("recoveredResult must be 42", (int) recoveredResult.get(), 42);
     }
 
     @Test
-    public void testRecoverWith() throws Exception {
+    public void testRecoverAgainstAFailure() throws Exception {
+        Try<Integer> result = Try.apply(
+                () -> failure()
+        );
+        Try<Integer> recoveredResult = result.recover(
+                (Exception e) -> {
+                    if (e instanceof NumberFormatException) {
+                        return new Integer(84);
+                    } else {
+                        return new Integer(0);
+                    }
+                }
+        );
+        assertEquals("recoveredResult must be 84", (int) recoveredResult.get(), 84);
+    }
 
+    @Test
+    public void testRecoverWithAgainstASuccess() throws Exception {
+        Try<Integer> result = Try.apply(
+                () -> success()
+        );
+        Try<Integer> recoveredResult = result.recoverWith(
+                (Exception e) -> {
+                    if (e instanceof NumberFormatException) {
+                        return Try.apply(() -> new Integer(84));
+                    } else {
+                        return Try.apply(() -> new Integer(0));
+                    }
+                }
+        );
+        assertEquals("recoveredResult must be 42", (int) recoveredResult.get(), 42);
+    }
+
+    @Test
+    public void testRecoverWithAgainstAFailure() throws Exception {
+        Try<Integer> result = Try.apply(
+                () -> failure()
+        );
+        Try<Integer> recoveredResult = result.recoverWith(
+                (Exception e) -> {
+                    if (e instanceof NumberFormatException) {
+                        return Try.apply(() -> new Integer(84));
+                    } else {
+                        return Try.apply(() -> new Integer(0));
+                    }
+                }
+        );
+        assertEquals("recoveredResult must be 84", (int) recoveredResult.get(), 84);
     }
 
     @Test
