@@ -3,6 +3,7 @@ package com.alessandrolacava.java.util;
 import org.junit.Test;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -241,13 +242,37 @@ public class TryTest {
     }
 
     @Test
-    public void testFailed() throws Exception {
-
+    public void testFailedAgainstASuccess() throws Exception {
+        Try<Integer> result = Try.apply(
+                () -> success()
+        );
+        Try<Exception> failedOnASuccessProducesFailure = result.failed();
+        assertEquals("failedOnASuccessProducesFailure is a Failure", failedOnASuccessProducesFailure.isFailure(), true);
     }
 
     @Test
-    public void testToOptional() throws Exception {
+    public void testFailedAgainstAFailure() throws Exception {
+        Try<Integer> result = Try.apply(
+                () -> failure()
+        );
+        Try<Exception> failedOnAFailureProducesSuccess = result.failed();
+        assertEquals("failedOnAFailureProducesSuccess is a Success", failedOnAFailureProducesSuccess.isSuccess(), true);
+    }
 
+    @Test
+    public void testToOptionalAgainstASuccess() throws Exception {
+        Try<Integer> result = Try.apply(
+                () -> success()
+        );
+        assertEquals("successful result.toOptional() must be Optional.of(42)", result.toOptional(), Optional.of(42));
+    }
+
+    @Test
+    public void testToOptionalAgainstAFailure() throws Exception {
+        Try<Integer> result = Try.apply(
+                () -> failure()
+        );
+        assertEquals("failed result.toOptional() must be Optional.empty()", result.toOptional(), Optional.empty());
     }
 
     @Test

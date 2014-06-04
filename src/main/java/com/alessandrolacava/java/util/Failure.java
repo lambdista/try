@@ -1,5 +1,6 @@
 package com.alessandrolacava.java.util;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -70,5 +71,50 @@ public final class Failure<T> extends Try<T> {
     @Override
     public Try<Exception> failed() {
         return new Success<>(exception);
+    }
+
+    @Override
+    public Optional<T> toOptional() {
+        return Optional.empty();
+    }
+
+    @Override
+    public T getOrElse(T defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public Try<T> orElse(Try<T> defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
+    public <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
+                                Function<Exception, ? extends Try<U>> failureFunc) {
+        return failureFunc.apply(exception);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Failure failure = (Failure) o;
+
+        if (!exception.equals(failure.exception)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return exception.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Failure{" +
+                "exception=" + exception +
+                '}';
     }
 }

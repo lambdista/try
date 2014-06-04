@@ -1,6 +1,7 @@
 package com.alessandrolacava.java.util;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -76,5 +77,50 @@ public final class Success<T> extends Try<T> {
     @Override
     public Try<Exception> failed() {
         return new Failure<>(new UnsupportedOperationException("Success.failed"));
+    }
+
+    @Override
+    public Optional<T> toOptional() {
+        return Optional.of(value);
+    }
+
+    @Override
+    public T getOrElse(T defaultValue) {
+        return value;
+    }
+
+    @Override
+    public Try<T> orElse(Try<T> defaultValue) {
+        return this;
+    }
+
+    @Override
+    public <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
+                                Function<Exception, ? extends Try<U>> failureFunc) {
+        return successFunc.apply(value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Success success = (Success) o;
+
+        if (!value.equals(success.value)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Success{" +
+                "value=" + value +
+                '}';
     }
 }
