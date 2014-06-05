@@ -5,14 +5,15 @@ import org.junit.Test;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TryTest {
 
     @Test
     public void testIsSuccess() {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
         assertTrue("result must be a success", result.isSuccess());
     }
@@ -20,7 +21,7 @@ public class TryTest {
     @Test
     public void testIsFailure() {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
         assertTrue("result must be a failure", result.isFailure());
     }
@@ -28,7 +29,7 @@ public class TryTest {
     @Test
     public void testGetAgainstASuccess() throws Exception {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
         int intResult = result.get();
         assertEquals("intResult must be 42", intResult, 42);
@@ -37,29 +38,28 @@ public class TryTest {
     @Test(expected = NumberFormatException.class)
     public void testGetAgainstAFailure() throws Exception {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
-        int intResult = result.get();
-        fail("intResult must fail with NumberFormatException");
+        result.get();
     }
 
     @Test
     public void testForEachAgainstASuccess() {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
         result.forEach(
-                (Integer i) -> assertEquals("i must be 42", (int) i, 42)
+                i -> assertEquals("i must be 42", (int) i, 42)
         );
     }
 
     @Test(expected = NumberFormatException.class)
     public void testForEachAgainstAFailure() throws Exception {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
         result.forEach(
-                (Integer i) -> System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed")
+                i -> System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed")
         );
 
         // Conversely, calling get mush throw the NumberFormatException captured in result
@@ -67,24 +67,24 @@ public class TryTest {
     }
 
     @Test
-    public void testMapAgainstASuccess() throws Exception {
+    public void testMapAgainstASuccess() {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
-        Try<String> stringResult = result.map(
-                (Integer i) -> i.toString() + ", Hello World!"
+        Try<String> mappedResult = result.map(
+                i -> i.toString() + ", Hello World!"
         );
-        assertEquals("stringResult must be '42, Hello World!'", stringResult.get(), "42, Hello World!");
+        assertEquals("mappedResult must be Success(\"42, Hello World!\")", mappedResult, new Success<>("42, Hello World!"));
 
     }
 
     @Test(expected = NumberFormatException.class)
     public void testMapAgainstAFailure() throws Exception {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
-        Try<String> stringResult = result.map(
-                (Integer i) -> {
+        result.map(
+                i -> {
                     String out = i.toString() + ", Hello World!";
                     System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed");
                     return out;
@@ -96,30 +96,28 @@ public class TryTest {
     }
 
     @Test
-    public void testFlatMapAgainstASuccess() throws Exception {
+    public void testFlatMapAgainstASuccess() {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
 
-        Try<String> chainedResult = result.flatMap(
-                (Integer i) -> Try.apply(
+        Try<String> flatMappedResult = result.flatMap(
+                i -> Try.apply(
                         () -> i + ", " + anotherSuccess()
                 )
         );
 
-        assertEquals("chainedResult must be '42, Hello World!'", chainedResult.get(), "42, Hello World!");
+        assertEquals("flatMappedResult must be Success(\"42, Hello World!\")", flatMappedResult, new Success<>("42, Hello World!"));
     }
 
     @Test(expected = NumberFormatException.class)
     public void testFlatMapAgainstAFailure() throws Exception {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
 
-        if (result instanceof Failure) System.out.println("YES");
-
         Try<String> chainedResult = result.flatMap(
-                (Integer i) -> Try.apply(
+                i -> Try.apply(
                         () -> {
                             String out = i + ", " + anotherSuccess();
                             System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed");
@@ -133,23 +131,23 @@ public class TryTest {
     }
 
     @Test
-    public void testFilterAgainstASuccess() throws Exception {
+    public void testFilterAgainstASuccess() {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
 
-        Try<Integer> filteredResult = result.filter((Integer i) -> i == 42);
-        assertEquals("filteredResult must be 42", (int) filteredResult.get(), 42);
+        Try<Integer> filteredResult = result.filter(i -> i == 42);
+        assertEquals("filteredResult must be Success(42)", filteredResult, new Success<>(42));
     }
 
     @Test(expected = NumberFormatException.class)
     public void testFilterAgainstAFailure() throws Exception {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
 
         Try<Integer> filteredResult = result.filter(
-                (Integer i) -> {
+                i -> {
                     System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed");
                     return i == 42;
                 }
@@ -162,11 +160,11 @@ public class TryTest {
     @Test(expected = NoSuchElementException.class)
     public void testNonMatchingFilter() throws Exception {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
 
         Try<Integer> filteredResult = result.filter(
-                (Integer i) -> i != 42
+                i -> i != 42
         );
 
         // In this case calling get mush throw a NoSuchElementException since the Predicate in filter does not hold
@@ -174,120 +172,147 @@ public class TryTest {
     }
 
     @Test
-    public void testRecoverAgainstASuccess() throws Exception {
+    public void testRecoverAgainstASuccess() {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
         Try<Integer> recoveredResult = result.recover(
-                (Exception e) -> {
-                    if (e instanceof NumberFormatException) {
-                        return new Integer(84);
+                exception -> {
+                    if (exception instanceof NumberFormatException) {
+                        return 84;
                     } else {
-                        return new Integer(0);
+                        return 0;
                     }
                 }
         );
-        assertEquals("recoveredResult must be 42", (int) recoveredResult.get(), 42);
+        assertEquals("recoveredResult must be Success(42)", recoveredResult, new Success<>(42));
     }
 
     @Test
-    public void testRecoverAgainstAFailure() throws Exception {
+    public void testRecoverAgainstAFailure() {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
         Try<Integer> recoveredResult = result.recover(
-                (Exception e) -> {
-                    if (e instanceof NumberFormatException) {
-                        return new Integer(84);
+                exception -> {
+                    if (exception instanceof NumberFormatException) {
+                        return 84;
                     } else {
-                        return new Integer(0);
+                        return 0;
                     }
                 }
         );
-        assertEquals("recoveredResult must be 84", (int) recoveredResult.get(), 84);
+        assertEquals("recoveredResult must be Success(84)", recoveredResult, new Success<>(84));
     }
 
     @Test
-    public void testRecoverWithAgainstASuccess() throws Exception {
+    public void testRecoverWithAgainstASuccess() {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
         Try<Integer> recoveredResult = result.recoverWith(
-                (Exception e) -> {
-                    if (e instanceof NumberFormatException) {
-                        return Try.apply(() -> new Integer(84));
+                exception -> {
+                    if (exception instanceof NumberFormatException) {
+                        return new Success<>(84);
                     } else {
-                        return Try.apply(() -> new Integer(0));
+                        return new Success<>(0);
                     }
                 }
         );
-        assertEquals("recoveredResult must be 42", (int) recoveredResult.get(), 42);
+        assertEquals("recoveredResult must be Success(42)", recoveredResult, new Success<>(42));
     }
 
     @Test
-    public void testRecoverWithAgainstAFailure() throws Exception {
+    public void testRecoverWithAgainstAFailure() {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
         Try<Integer> recoveredResult = result.recoverWith(
-                (Exception e) -> {
-                    if (e instanceof NumberFormatException) {
-                        return Try.apply(() -> new Integer(84));
+                exception -> {
+                    if (exception instanceof NumberFormatException) {
+                        return new Success<>(84);
                     } else {
-                        return Try.apply(() -> new Integer(0));
+                        return new Success<>(0);
                     }
                 }
         );
-        assertEquals("recoveredResult must be 84", (int) recoveredResult.get(), 84);
+        assertEquals("recoveredResult must be Success(84)", recoveredResult, new Success<>(84));
     }
 
     @Test
-    public void testFailedAgainstASuccess() throws Exception {
+    public void testFailedAgainstASuccess() {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
         Try<Exception> failedOnASuccessProducesFailure = result.failed();
         assertEquals("failedOnASuccessProducesFailure is a Failure", failedOnASuccessProducesFailure.isFailure(), true);
     }
 
     @Test
-    public void testFailedAgainstAFailure() throws Exception {
+    public void testFailedAgainstAFailure() {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
         Try<Exception> failedOnAFailureProducesSuccess = result.failed();
         assertEquals("failedOnAFailureProducesSuccess is a Success", failedOnAFailureProducesSuccess.isSuccess(), true);
     }
 
     @Test
-    public void testToOptionalAgainstASuccess() throws Exception {
+    public void testToOptionalAgainstASuccess() {
         Try<Integer> result = Try.apply(
-                () -> success()
+                this::success
         );
         assertEquals("successful result.toOptional() must be Optional.of(42)", result.toOptional(), Optional.of(42));
     }
 
     @Test
-    public void testToOptionalAgainstAFailure() throws Exception {
+    public void testToOptionalAgainstAFailure() {
         Try<Integer> result = Try.apply(
-                () -> failure()
+                this::failure
         );
-        assertEquals("failed result.toOptional() must be Optional.empty()", result.toOptional(), Optional.empty());
+        assertEquals("failed result.toOptional() must be Optional.empty()", result.toOptional(), Optional.<Integer>empty());
     }
 
     @Test
-    public void testGetOrElse() throws Exception {
-
+    public void testGetOrElseAgainstASuccess() {
+        Try<Integer> result = Try.apply(
+                this::success
+        );
+        int out = result.getOrElse(84);
+        assertEquals("out must be 42", out, 42);
     }
 
     @Test
-    public void testOrElse() throws Exception {
-
+    public void testOrElseAgainstAFailure() {
+        Try<Integer> result = Try.apply(
+                this::failure
+        );
+        int out = result.getOrElse(84);
+        assertEquals("out must be 84", out, 84);
     }
 
     @Test
-    public void testTransform() throws Exception {
+    public void testTransformAgainstASuccess() {
+        Try<Integer> result = Try.apply(
+                this::success
+        );
+        Try<Integer> out = result.transform(
+                i -> new Success<>(i + 42),
+                exception -> new Success<>(0)
+        );
+        assertEquals("out must be Success(84) (42 + 42)", out, new Success<>(84));
+    }
 
+    @Test
+    public void testTransformAgainstAFailure() {
+        Try<Integer> result = Try.apply(
+                this::failure
+        );
+        Try<Integer> out = result.transform(
+                i -> new Success<>(i + 42),
+                exception -> new Success<>(0)
+        );
+        assertEquals("out must be Success(0)", out, new Success<>(0));
     }
 
     private int success() {
