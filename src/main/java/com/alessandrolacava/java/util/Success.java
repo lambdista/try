@@ -57,7 +57,7 @@ public final class Success<T> extends Try<T> {
             if(predicate.test(value)) {
                 return this;
             } else {
-                return new Failure<T>(new NoSuchElementException("Predicate does not hold for " + value));
+                return new Failure<>(new NoSuchElementException("Predicate does not hold for " + value));
             }
         } catch (Exception e) {
             return new Failure<>(e);

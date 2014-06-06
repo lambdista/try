@@ -283,13 +283,31 @@ public class TryTest {
     }
 
     @Test
-    public void testOrElseAgainstAFailure() {
+    public void testGetOrElseAgainstAFailure() {
         Try<Integer> result = Try.apply(
                 this::failure
         );
         int out = result.getOrElse(84);
         assertEquals("out must be 84", out, 84);
     }
+
+    @Test
+    public void testOrElseAgainstASuccess() {
+        Try<Integer> result = Try.apply(
+                this::success
+        );
+        Try<Integer> out = result.orElse(new Success<>(84));
+        assertEquals("out must be Success(42)", out, new Success(42));
+    }
+    @Test
+    public void testOrElseAgainstAFailure() {
+        Try<Integer> result = Try.apply(
+                this::failure
+        );
+        Try<Integer> out = result.orElse(new Success<>(84));
+        assertEquals("out must be Success(84)", out, new Success(84));
+    }
+
 
     @Test
     public void testTransformAgainstASuccess() {

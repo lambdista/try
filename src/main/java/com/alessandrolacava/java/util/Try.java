@@ -47,9 +47,9 @@ public abstract class Try<T> {
 
     public static <T> Try<T> apply(FailableSupplier<T> supplier) {
         try {
-            return new Success<T>(supplier.get());
+            return new Success<>(supplier.get());
         } catch (Exception e) {
-            return new Failure<T>(e);
+            return new Failure<>(e);
         }
     }
 }
