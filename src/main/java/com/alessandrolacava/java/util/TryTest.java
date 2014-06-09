@@ -74,7 +74,7 @@ public class TryTest {
         Try<String> mappedResult = result.map(
                 i -> i.toString() + ", Hello World!"
         );
-        assertEquals("mappedResult must be Success(\"42, Hello World!\")", mappedResult, new Success<>("42, Hello World!"));
+        assertEquals("mappedResult must be Success(\"42, Hello World!\")", mappedResult, new Try.Success<>("42, Hello World!"));
 
     }
 
@@ -107,7 +107,7 @@ public class TryTest {
                 )
         );
 
-        assertEquals("flatMappedResult must be Success(\"42, Hello World!\")", flatMappedResult, new Success<>("42, Hello World!"));
+        assertEquals("flatMappedResult must be Success(\"42, Hello World!\")", flatMappedResult, new Try.Success<>("42, Hello World!"));
     }
 
     @Test(expected = NumberFormatException.class)
@@ -137,7 +137,7 @@ public class TryTest {
         );
 
         Try<Integer> filteredResult = result.filter(i -> i == 42);
-        assertEquals("filteredResult must be Success(42)", filteredResult, new Success<>(42));
+        assertEquals("filteredResult must be Success(42)", filteredResult, new Try.Success<>(42));
     }
 
     @Test(expected = NumberFormatException.class)
@@ -185,7 +185,7 @@ public class TryTest {
                     }
                 }
         );
-        assertEquals("recoveredResult must be Success(42)", recoveredResult, new Success<>(42));
+        assertEquals("recoveredResult must be Success(42)", recoveredResult, new Try.Success<>(42));
     }
 
     @Test
@@ -202,7 +202,7 @@ public class TryTest {
                     }
                 }
         );
-        assertEquals("recoveredResult must be Success(84)", recoveredResult, new Success<>(84));
+        assertEquals("recoveredResult must be Success(84)", recoveredResult, new Try.Success<>(84));
     }
 
     @Test
@@ -213,13 +213,13 @@ public class TryTest {
         Try<Integer> recoveredResult = result.recoverWith(
                 exception -> {
                     if (exception instanceof NumberFormatException) {
-                        return new Success<>(84);
+                        return new Try.Success<>(84);
                     } else {
-                        return new Success<>(0);
+                        return new Try.Success<>(0);
                     }
                 }
         );
-        assertEquals("recoveredResult must be Success(42)", recoveredResult, new Success<>(42));
+        assertEquals("recoveredResult must be Success(42)", recoveredResult, new Try.Success<>(42));
     }
 
     @Test
@@ -230,13 +230,13 @@ public class TryTest {
         Try<Integer> recoveredResult = result.recoverWith(
                 exception -> {
                     if (exception instanceof NumberFormatException) {
-                        return new Success<>(84);
+                        return new Try.Success<>(84);
                     } else {
-                        return new Success<>(0);
+                        return new Try.Success<>(0);
                     }
                 }
         );
-        assertEquals("recoveredResult must be Success(84)", recoveredResult, new Success<>(84));
+        assertEquals("recoveredResult must be Success(84)", recoveredResult, new Try.Success<>(84));
     }
 
     @Test
@@ -296,16 +296,16 @@ public class TryTest {
         Try<Integer> result = Try.apply(
                 this::success
         );
-        Try<Integer> out = result.orElse(new Success<>(84));
-        assertEquals("out must be Success(42)", out, new Success(42));
+        Try<Integer> out = result.orElse(new Try.Success<>(84));
+        assertEquals("out must be Success(42)", out, new Try.Success(42));
     }
     @Test
     public void testOrElseAgainstAFailure() {
         Try<Integer> result = Try.apply(
                 this::failure
         );
-        Try<Integer> out = result.orElse(new Success<>(84));
-        assertEquals("out must be Success(84)", out, new Success(84));
+        Try<Integer> out = result.orElse(new Try.Success<>(84));
+        assertEquals("out must be Success(84)", out, new Try.Success(84));
     }
 
 
@@ -315,10 +315,10 @@ public class TryTest {
                 this::success
         );
         Try<Integer> out = result.transform(
-                i -> new Success<>(i + 42),
-                exception -> new Success<>(0)
+                i -> new Try.Success<>(i + 42),
+                exception -> new Try.Success<>(0)
         );
-        assertEquals("out must be Success(84) (42 + 42)", out, new Success<>(84));
+        assertEquals("out must be Success(84) (42 + 42)", out, new Try.Success<>(84));
     }
 
     @Test
@@ -327,10 +327,10 @@ public class TryTest {
                 this::failure
         );
         Try<Integer> out = result.transform(
-                i -> new Success<>(i + 42),
-                exception -> new Success<>(0)
+                i -> new Try.Success<>(i + 42),
+                exception -> new Try.Success<>(0)
         );
-        assertEquals("out must be Success(0)", out, new Success<>(0));
+        assertEquals("out must be Success(0)", out, new Try.Success<>(0));
     }
 
     private int success() {
