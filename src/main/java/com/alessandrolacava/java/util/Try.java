@@ -143,12 +143,6 @@ public abstract class Try<T> {
      */
     public abstract Optional<T> toOptional();
 
-    /* TODO:
-    withFilter
-    flatten
-
-     */
-
     /**
      * Returns the value from this {@link Success} or the given {@code defaultValue} argument if this is a {@link Failure}.
      *
