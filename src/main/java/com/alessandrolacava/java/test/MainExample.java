@@ -1,4 +1,6 @@
-package com.alessandrolacava.java.util;
+package com.alessandrolacava.java.test;
+
+import com.alessandrolacava.java.util.Try;
 
 import java.io.IOException;
 import java.util.Scanner;
