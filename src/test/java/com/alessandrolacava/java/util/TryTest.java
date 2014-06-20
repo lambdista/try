@@ -8,6 +8,13 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Unit test for the {@code Try-Success-Failure} API. It covers each and every method of
+ * {@link com.alessandrolacava.java.util.Try} in case of both success and failure
+ *
+ * @author Alessandro Lacava
+ * @since 2014-06-20
+ */
 public class TryTest {
 
     @Test
