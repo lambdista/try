@@ -1,6 +1,7 @@
-package com.alessandrolacava.java.util;
+package org.typesafely.java.util;
 
 import org.junit.Test;
+import org.typesafely.java.util.Try;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -10,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the {@code Try-Success-Failure} API. It covers each and every method of
- * {@link com.alessandrolacava.java.util.Try} in case of both success and failure
+ * {@link org.typesafely.java.util.Try} in case of both success and failure
  *
  * @author Alessandro Lacava
  * @since 2014-06-20

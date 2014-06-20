@@ -39,7 +39,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.alessandrolacava.java.test.MainExample</mainClass>
+                    <mainClass>org.typesafely.java.test.MainExample</mainClass>
                 </configuration>
             </plugin>
         </plugins>

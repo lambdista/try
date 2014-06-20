@@ -1,4 +1,4 @@
-package com.alessandrolacava.java.util;
+package org.typesafely.java.util;
 
 /**
  * This class is semantically the same as the {@link java.util.function.Supplier} class apart from the fact that

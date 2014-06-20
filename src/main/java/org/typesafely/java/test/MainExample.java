@@ -1,6 +1,6 @@
-package com.alessandrolacava.java.test;
+package org.typesafely.java.test;
 
-import com.alessandrolacava.java.util.Try;
+import org.typesafely.java.util.Try;
 
 import java.io.IOException;
 import java.util.Scanner;

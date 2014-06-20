@@ -1,4 +1,4 @@
-package com.alessandrolacava.java.util;
+package org.typesafely.java.util;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -7,18 +7,18 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 /**
  * <p>The {@code Try} type represents a computation that may fail. If the computation is successful returns
- * the value wrapped in a {@link com.alessandrolacava.java.util.Try.Success} otherwise returns the
- * {@link java.lang.Exception} wrapped in a {@link com.alessandrolacava.java.util.Try.Failure}.</p>
+ * the value wrapped in a {@link Try.Success} otherwise returns the
+ * {@link java.lang.Exception} wrapped in a {@link Try.Failure}.</p>
  *
  * <p>To use {@code Try} you need to call the {@link Try#apply(FailableSupplier)} method passing in a lambda with
  * the same signature used for a common {@link java.util.function.Supplier}.
- * Indeed {@link com.alessandrolacava.java.util.FailableSupplier} is just a {@link java.util.function.Supplier} with a
+ * Indeed {@link FailableSupplier} is just a {@link java.util.function.Supplier} with a
  * {@code 'throws Exception'} added to its {@code 'get'} method.</p>
  *
  * <p>For example, {@code Try} can be used to perform division on a user-defined input, without the need to do explicit
  * exception-handling in all of the places that an exception might occur.</p>
  *
- * <p>An important property of {@code Try} shown in the {@link com.alessandrolacava.java.test.MainExample#divide()} method is its ability
+ * <p>An important property of {@code Try} shown in the {@link org.typesafely.java.test.MainExample#divide()} method is its ability
  * to <i>pipeline (chain if you prefer)</i>  operations,
  * catching exceptions along the way thanks to its {@link Try#flatMap(java.util.function.Function)} method. If you
  * are not a seasoned functional programming geek concepts such as {@code flatMap/map} might not be easy to grasp
