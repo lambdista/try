@@ -1,6 +1,6 @@
-# Try-Success-Failure API: Java implementation of the famous Scala counterpart. #
+# Scala's Try-Success-Failure for Java 8 #
 
-This API is a Java implementation of <a href="http://www.scala-lang.org/api/current/#scala.util.Try">Scala Try API</a>,
+This API is a Java 8 implementation of <a href="http://www.scala-lang.org/api/current/#scala.util.Try">Scala Try API</a>,
 originally implemented by the guys at <a href="https://twitter.com/">Twitter</a> and later added to the Scala Standard Library.
 
 The `Try` type represents a computation that may fail. If the computation is successful returns
