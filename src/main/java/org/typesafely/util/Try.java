@@ -1,4 +1,19 @@
-package org.typesafely.java.util;
+/**
+ * Copyright 2014 Alessandro Lacava
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.typesafely.util;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -18,7 +33,7 @@ import java.util.function.Predicate;
  * <p>For example, {@code Try} can be used to perform division on a user-defined input, without the need to do explicit
  * exception-handling in all of the places that an exception might occur.</p>
  *
- * <p>An important property of {@code Try} shown in the {@link org.typesafely.java.test.MainExample#divide()} method is its ability
+ * <p>An important property of {@code Try} shown in the {@link org.typesafely.test.MainExample#divide()} method is its ability
  * to <i>pipeline (chain if you prefer)</i>  operations,
  * catching exceptions along the way thanks to its {@link Try#flatMap(java.util.function.Function)} method. If you
  * are not a seasoned functional programming geek concepts such as {@code flatMap/map} might not be easy to grasp

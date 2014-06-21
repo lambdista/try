@@ -58,8 +58,5 @@ printed out.
 
 Anyway, as I already said, see the `TryTest` class for a thorough coverage of all methods.
 
-## Credits ##
-Thanks to the guys at <a href="https://twitter.com/">Twitter</a> for the original API design for Scala.
-
 ## Final Notes ##
 Any criticism/suggestion is more than welcome!
