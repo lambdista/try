@@ -106,7 +106,7 @@ public class MainExample {
 
         Try<Integer> result = num.flatMap(x -> denom.map(y -> x / y));
         Try<String> resultTryStr = result.map(i -> "The result of division is: " + i);
-        String resultStr = resultTryStr.getOrElse("You must've divided by zero or entered something that's not an Int. Try again!");
+        String resultStr = resultTryStr.getOrElse("The integers you entered are not valid or the divisor is zero.");
         System.out.println(resultStr);
     }
 

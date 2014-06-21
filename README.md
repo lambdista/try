@@ -26,13 +26,13 @@ Try<Integer> denom = Try.apply(divisor::nextInt);
 
 Try<Integer> result = num.flatMap(x -> denom.map(y -> x / y));
 Try<String> resultTryStr = result.map(i -> "The result of division is: " + i);
-String resultStr = resultTryStr.getOrElse("You must've divided by zero or entered something that's not an Int. Try again!");
+String resultStr = resultTryStr.getOrElse("The integers you entered are not valid or the divisor is zero.");
 System.out.println(resultStr);
 ```
 In the previous example if you enter two valid integers with the second one--the divisor--being different from zero
 then the code prints out `The result of division is: $RESULT`, where `$RESULT` is the division between the first
 and the second number. On the other hand, if you either enter non valid integers--such as a string--or the second
-number is zero then you'll get the message `You must've divided by zero or entered something that's not an Int. Try again!`
+number is zero then you'll get the message `The integers you entered are not valid or the divisor is zero.`
 printed out.
 
 An important property of `Try` shown in the previous code snippet is its ability
