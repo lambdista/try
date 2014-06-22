@@ -43,7 +43,7 @@ these methods more and more often since some important Java 8 classes already im
 (e.g. `java.util.Optional` and `java.util.stream.Stream`. Anyway for the moment just take for
 granted that to pipeline more than two operations, say N, you just need to chain them by using N - 1
 `flatMap` calls and a last call to `map`. E.g.: Suppose you have 3 variables (x, y and z) being
-of type `Try<Integer>` and you just wanto to sum them up. The code you need for doing that is the
+of type `Try<Integer>` and you just want to sum them up. The code you need for doing that is the
 following:
 
 ```java
