@@ -80,8 +80,8 @@ public class MainExample {
 
     /**
      * An important property of {@code Try} shown in the {@code divide()} example is its ability
-     * to <i>pipeline (chain if you prefer)</i>  operations,
-     * catching exceptions along the way thanks to its {@link Try#flatMap(java.util.function.Function)} method. If you
+     * to <i>pipeline</i> (<i>chain</i> if you prefer)  operations,
+     * catching exceptions along the way thanks to its {@code flatMap} method. If you
      * are not a seasoned functional programming geek concepts such as {@code flatMap/map} might not be easy to grasp
      * at first. However you'll get used to them and, in the end, you'll love them. Moreover you're going to encounter
      * these methods more and more often since some important Java 8 classes already implement them

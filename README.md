@@ -36,7 +36,7 @@ number is zero then you'll get the message `The integers you entered are not val
 printed out.
 
 An important property of `Try` shown in the previous code snippet is its ability
-to *pipeline (chain if you prefer)*  operations, catching exceptions along the way thanks to its `flatMap` method.
+to *pipeline* (*chain* if you prefer)  operations, catching exceptions along the way thanks to its `flatMap` method.
 If you are not a seasoned functional programming geek concepts such as `flatMap/map` might not be easy to grasp
 at first. However you'll get used to them and, in the end, you'll love them. Moreover you're going to encounter
 these methods more and more often since some important Java 8 classes already implement them

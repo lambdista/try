@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Alessandro Lacava
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,19 +20,20 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 /**
  * <p>The {@code Try} type represents a computation that may fail. If the computation is successful returns
- * the value wrapped in a {@link Try.Success} otherwise returns the
- * {@link java.lang.Exception} wrapped in a {@link Try.Failure}.</p>
- *
+ * the value wrapped in a {@link Success} otherwise returns the
+ * {@link java.lang.Exception} wrapped in a {@link Failure}.</p>
+ * <p>
  * <p>To use {@code Try} you need to call the {@link Try#apply(FailableSupplier)} method passing in a lambda with
  * the same signature used for a common {@link java.util.function.Supplier}.
  * Indeed {@link FailableSupplier} is just a {@link java.util.function.Supplier} with a
  * {@code 'throws Exception'} added to its {@code 'get'} method.</p>
- *
+ * <p>
  * <p>For example, {@code Try} can be used to perform division on a user-defined input, without the need to do explicit
  * exception-handling in all of the places that an exception might occur.</p>
- *
+ * <p>
  * <p>An important property of {@code Try} shown in the {@link org.typesafely.example.MainExample#divide()} method is its ability
  * to <i>pipeline (chain if you prefer)</i>  operations,
  * catching exceptions along the way thanks to its {@link Try#flatMap(java.util.function.Function)} method. If you
@@ -44,23 +45,23 @@ import java.util.function.Predicate;
  * {@code flatMap} calls and a last call to {@code map}. E.g.: Suppose you have 3 variables (x, y and z) being
  * of type {@code Try<Integer>} and you just wanto to sum them up. The code you need for doing that is the
  * following:</p>
- *
+ * <p>
  * <pre>
  * x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)))
  * </pre>
- *
+ * <p>
  * Apart from {@code map} and {@code flatMap}, {@code Try} has many other useful methods. See the {@code TryTest}
  * test class for a thorough coverage of all {@code Try}'s methods.
  *
+ * @param <T> the type returned by the computation
  * @author Alessandro Lacava
  * @since 2014-06-20
- * @param <T> the type returned by the computation
  */
 public abstract class Try<T> {
 
     /**
      * Ensures that the only possible instances of this class
-     * are either {@link Try.Success} or {@link Try.Failure}
+     * are either {@link Success} or {@link Failure}
      */
     private Try() {
     }
@@ -76,14 +77,15 @@ public abstract class Try<T> {
     public abstract boolean isFailure();
 
     /**
-     * @return the value from this {@code Success} or throws the exception if this is a {@code Failure}
-     * @throws Exception
+     * @return the value wrapped within {@code Success} if it's a {@code Success} or throws
+     * the exception if {@code this} is a {@code Failure}
+     * @throws Exception if {@code this} is a {@code Failure}
      */
     public abstract T get() throws Exception;
 
     /**
-     * Calls {@link Consumer#accept(T)} passing the value to it if this is a {@link Try.Success} otherwise it takes
-     * no action if it is a {@link Try.Failure}
+     * Feeds the value to {@link Consumer}'s {@code accept} method if {@code this} is
+     * a {@link Success}. If {@code this} is a  {@link Failure} it takes no action
      *
      * @param action the {@link Consumer} to use
      */
@@ -91,97 +93,99 @@ public abstract class Try<T> {
 
     /**
      * Maps the value of type {@code T} to the value of type {@code U}
-     * by applying the {@code mapper} function to it if this is a {@link Try.Success} otherwise it takes no action
-     * if this is a {@link Try.Failure}
+     * by applying the {@code mapper} function to it if {@code this} is a {@link Success} otherwise it takes no action
+     * if {@code this} is a {@link Failure}
      *
      * @param mapper a function to apply to the value of type {@code T}
-     * @param <U>    The type of the result
-     * @return the result of applying {@code mapper} wrapped in a {@code Try} if it's a {@link Try.Success} or
-     * {@code this} if it's a  {@link Try.Failure}
+     * @param <U>    the type of the result
+     * @return the result of applying {@code mapper} wrapped in a {@code Try} if it's a {@link Success} or
+     * {@code this} if it's a  {@link Failure}
      */
     public abstract <U> Try<U> map(Function<? super T, ? extends U> mapper);
 
     /**
      * Maps the value of type {@code T} to the value of type {@code Try<U>}
-     * by applying the {@code mapper} function to it if this is a {@link Try.Success} otherwise it takes no action
-     * if this is a {@link Try.Failure}
+     * by applying the {@code mapper} function to it if {@code this} is a {@link Success} otherwise it takes no action
+     * if {@code this} is a {@link Failure}
      *
      * @param mapper a function to apply to the value which produces a {@code Try}
      *               of a new value
-     * @param <U>    The type of the result
-     * @return the result of applying {@code mapper} if it's a {@link Try.Success} or
-     * {@code this} if it's a  {@link Try.Failure}
+     * @param <U>    the type of the result
+     * @return the result of applying {@code mapper} if it's a {@link Success} or
+     * {@code this} if it's a  {@link Failure}
      */
     public abstract <U> Try<U> flatMap(Function<? super T, ? extends Try<U>> mapper);
 
     /**
-     * Converts this to a {@link Failure} if the predicate is not satisfied.
+     * Converts {@code this} to a {@link Failure} if the predicate is not satisfied.
      *
      * @param predicate the {@link Predicate} to use
-     * @return
+     * @return a {@code Try<T>} which is a {@link Success} if {@code predicate}
+     * is satisfied or a {@link Failure} if either  {@code this}
+     * is already a {@link Failure} or the {@code predicate}
+     * is not satisfied.
      */
     public abstract Try<T> filter(Predicate<? super T> predicate);
 
     /**
-     * Applies the given function {@code recoverFunc} if this is a {@link Failure}, otherwise returns this if this is a {@link Success}.
-     * This is like {@link #map(Function)} for the exception.
+     * Applies the given function {@code recoverFunc} if {@code this} is a {@link Failure},
+     * otherwise returns {@code this} if {@code this} is a {@link Success}.
      *
-     * @param recoverFunc
-     * @param <U>
-     * @return
+     * @param recoverFunc the function to apply if {@code this} is a {@link Failure}
+     * @param <U>         the type of the result
+     * @return a {@code Try<U>} obtained by wrapping the result of applying {@code recoverFunc} to
+     * the {@link java.lang.Exception}
      */
     public abstract <U> Try<U> recover(Function<? super Exception, ? extends U> recoverFunc);
 
     /**
-     * Applies the given function {@code recoverFunc} if this is a {@link Failure}, otherwise returns this if this is a {@link Success}.
-     * This is like {@link #flatMap(Function)} for the exception.
+     * Applies the given function {@code recoverFunc} if {@code this} is a {@link Failure},
+     * otherwise returns {@code this} if {@code this} is a {@link Success}.
      *
-     * @param recoverFunc
-     * @param <U>
-     * @return
+     * @param recoverFunc the function to apply if {@code this} is a {@link Failure}
+     * @param <U>         the type of the result
+     * @return a {@code Try<U>} obtained by applying {@code recoverFunc} to the {@link java.lang.Exception}
      */
     public abstract <U> Try<U> recoverWith(Function<? super Exception, ? extends Try<U>> recoverFunc);
 
     /**
-     * Completes this {@code Try} with an exception wrapped in a {@link Success}. The exception is either the exception that the
-     * {@code Try} failed with (if a {@link Failure}) or an {@link java.lang.UnsupportedOperationException}.
+     * Completes {@code this} {@code Try} with an exception wrapped in a {@link Success}.
      *
-     * @return
+     * @return a {@code Try<Exception>}, where {@code Exception} is either the exception that the {@code Try} failed
+     * with (if {@code this} is a {@link Failure}) or an {@link java.lang.UnsupportedOperationException}
      */
     public abstract Try<Exception> failed();
 
     /**
-     * Returns {@link Optional#empty()} if this is a {@link Failure} or a {@link Optional#of(T)} )}
-     * containing the value if this is a {@link Success}.
+     * Converts this {@code Try<T>} into a {@code java.util.Optional<T>}
      *
-     * @return
+     * @return the result of invoking {@link Optional}'s {@code empty} method if {@code this} is a {@link Failure}
+     * or {@link Optional}'s {@code of} method if {@code this} is a {@link Success}
      */
     public abstract Optional<T> toOptional();
 
     /**
-     * Returns the value from this {@link Success} or the given {@code defaultValue} argument if this is a {@link Failure}.
-     *
-     * @param defaultValue
-     * @return
+     * @param defaultValue the default value to return if {@code this} is a {@link Failure}
+     * @return the value from {@code this} {@link Success} or the given {@code defaultValue}
+     * argument if {@code this} is a {@link Failure}
      */
     public abstract T getOrElse(T defaultValue);
 
     /**
-     * Returns this {@code Try} if it's a {@link Success} or the given {@code defaultValue} argument if this is a {@link Failure}.
-     *
-     * @param defaultValue
-     * @return
+     * @param defaultValue the default value to return if {@code this} is a {@link Failure}
+     * @return {@code this} {@code Try} if it's a {@link Success} or the given {@code defaultValue}
+     * argument if {@code this} is a {@link Failure}
      */
     public abstract Try<T> orElse(Try<T> defaultValue);
 
     /**
-     * Completes this {@code Try} by applying the function {@code failureFunc} to this if it is of type {@link Failure},
-     * or the function {@code successFunc} if this is a {@link Success}.
+     * Completes {@code this} {@code Try} by applying the function {@code failureFunc} to {@code this} if it is of type {@link Failure},
+     * or the function {@code successFunc} if {@code this} is a {@link Success}.
      *
-     * @param successFunc
-     * @param failureFunc
-     * @param <U>
-     * @return
+     * @param successFunc the function to apply if {@code this} is a {@link Success}
+     * @param failureFunc the function to apply if {@code this} is a {@link Failure}
+     * @param <U>         the type of the result
+     * @return a {@code Try<U>} obtained by applying either {@code successFunc} or {@code failureFunc}
      */
     public abstract <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
                                          Function<Exception, ? extends Try<U>> failureFunc);
@@ -191,8 +195,8 @@ public abstract class Try<T> {
      * method will ensure any non-fatal exception is caught and a {@link Failure} object is returned.
      *
      * @param supplier the {@link FailableSupplier} to use
-     * @param <T> the type returned by the {@link FailableSupplier}
-     * @return a {@code Try} object (an instance of either {@link Try.Success} or {@link Try.Failure}
+     * @param <T>      the type returned by the {@link FailableSupplier}
+     * @return a {@code Try} object (an instance of either {@link Success} or {@link Failure}
      */
     public static <T> Try<T> apply(FailableSupplier<T> supplier) {
         try {

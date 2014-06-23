@@ -28,7 +28,7 @@ public interface FailableSupplier<T> {
     /**
      *
      * @return a value of type {@code T}
-     * @throws Exception
+     * @throws Exception if it fails
      */
     public T get() throws Exception;
 }
