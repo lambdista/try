@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>try-success-failure by typesafely</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>try-success-failure</h1>
+        <p>Implementation of the Try-Success-Failure Scala API for Java 8</p>
+
+        <p class="view"><a href="https://github.com/typesafely/try-success-failure">View the Project on GitHub <small>typesafely/try-success-failure</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/typesafely/try-success-failure/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/typesafely/try-success-failure/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/typesafely/try-success-failure">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="scalas-try-success-failure-for-java-8" class="anchor" href="#scalas-try-success-failure-for-java-8"><span class="octicon octicon-link"></span></a>Scala's Try-Success-Failure for Java 8</h1>
+
+<p>This API is a Java 8 implementation of <a href="http://www.scala-lang.org/api/current/#scala.util.Try">Scala Try API</a>,
+originally implemented by the guys at <a href="https://twitter.com/">Twitter</a> and later added to the Scala Standard Library.</p>
+
+<p>The <code>Try</code> type represents a computation that may fail. If the computation is successful returns
+the value wrapped in a <code>Try.Success</code> otherwise returns the
+<code>java.lang.Exception</code> wrapped in a <code>Try.Failure</code>.</p>
+
+<p>To use <code>Try</code> you need to call the <code>Try.apply(FailableSupplier)</code> method passing in a lambda with
+the same signature used for a common <code>java.util.function.Supplier</code>.
+Indeed <code>FailableSupplier</code> is just a <code>java.util.function.Supplier</code> with a
+<code>throws Exception</code> added to its <code>get</code> method.</p>
+
+<p>For example, <code>Try</code> can be used to perform division on a user-defined input, without the need to do explicit
+exception-handling in all of the places that an exception might occur:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Integer division"</span><span class="o">);</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Enter the dividend press Return and then enter the divisor: "</span><span class="o">);</span>
+<span class="n">Scanner</span> <span class="n">dividend</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Scanner</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">in</span><span class="o">);</span>
+<span class="n">Scanner</span> <span class="n">divisor</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Scanner</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">in</span><span class="o">);</span>
+
+<span class="n">Try</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">num</span> <span class="o">=</span> <span class="n">Try</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="nl">dividend:</span><span class="o">:</span><span class="n">nextInt</span><span class="o">);</span>
+<span class="n">Try</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">Try</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="nl">divisor:</span><span class="o">:</span><span class="n">nextInt</span><span class="o">);</span>
+
+<span class="n">Try</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">num</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">denom</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="o">));</span>
+<span class="n">Try</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">resultTryStr</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">i</span> <span class="o">-&gt;</span> <span class="s">"The result of division is: "</span> <span class="o">+</span> <span class="n">i</span><span class="o">);</span>
+<span class="n">String</span> <span class="n">resultStr</span> <span class="o">=</span> <span class="n">resultTryStr</span><span class="o">.</span><span class="na">getOrElse</span><span class="o">(</span><span class="s">"The integers you entered are not valid or the divisor is zero."</span><span class="o">);</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">resultStr</span><span class="o">);</span>
+</pre></div>
+
+<p>In the previous example if you enter two valid integers with the second one--the divisor--being different from zero
+then the code prints out <code>The result of division is: $RESULT</code>, where <code>$RESULT</code> is the division between the first
+and the second number. On the other hand, if you either enter non valid integers--such as a string--or the second
+number is zero then you'll get the message <code>The integers you entered are not valid or the divisor is zero.</code>
+printed out.</p>
+
+<p>An important property of <code>Try</code> shown in the previous code snippet is its ability
+to <em>pipeline (chain if you prefer)</em>  operations, catching exceptions along the way thanks to its <code>flatMap</code> method.
+If you are not a seasoned functional programming geek concepts such as <code>flatMap/map</code> might not be easy to grasp
+at first. However you'll get used to them and, in the end, you'll love them. Moreover you're going to encounter
+these methods more and more often since some important Java 8 classes already implement them
+(e.g. <code>java.util.Optional</code> and <code>java.util.stream.Stream</code>. Anyway for the moment just take for
+granted that to pipeline more than two operations, say N, you just need to chain them by using N - 1
+<code>flatMap</code> calls and a last call to <code>map</code>. E.g.: Suppose you have 3 variables (x, y and z) being
+of type <code>Try&lt;Integer&gt;</code> and you just want to sum them up. The code you need for doing that is the
+following:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">x</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="n">z</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">c</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="o">)))</span>
+</pre></div>
+
+<p>Apart from <code>map</code> and <code>flatMap</code>, <code>Try</code> has many other useful methods. See the <code>TryTest</code>
+class for a thorough coverage of all methods.</p>
+
+<h2>
+<a name="final-notes" class="anchor" href="#final-notes"><span class="octicon octicon-link"></span></a>Final Notes</h2>
+
+<p>Any criticism/suggestion is more than welcome!</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/typesafely">typesafely</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
