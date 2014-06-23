@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.typesafely.test;
+package org.typesafely.example;
 
 import org.typesafely.util.Try;
 
@@ -51,13 +51,15 @@ public class MainExample {
         );
         System.out.println("getOrElse against failures: " + resultOfFailure.getOrElse(42));
 
-        divide();
-
         Try<Integer> x = Try.apply(() -> 3);
         Try<Integer> y = Try.apply(() -> 6);
         Try<Integer> z = Try.apply(() -> 9);
 
         Try<Integer> res = x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)));
+
+        res.forEach(sum -> System.out.println("The sum is: " + sum));
+
+        divide();
     }
 
     public static Integer failure1() throws IOException {
