@@ -54,7 +54,7 @@ Apart from `map` and `flatMap`, `Try` has many other useful methods. See the `Tr
 class for a thorough coverage of all methods.
 
 ## Javadoc ##
-<a href="http://typesafely.github.io/try-success-failure/apidocs/">Here</a> you can find the Javadoc for this API.
+<a href="http://typesafely.github.io/try/apidocs/">API documentation</a> for this project.
 
 ## Final Notes ##
 Any criticism/suggestion is more than welcome!
