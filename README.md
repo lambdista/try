@@ -56,5 +56,19 @@ class for a thorough coverage of all methods.
 ## Javadoc ##
 <a href="http://typesafely.github.io/try/apidocs/">API documentation</a> for this project.
 
-## Final Notes ##
-Any criticism/suggestion is more than welcome!
+## Build ##
+
+To build:
+
+```
+$ git clone https://github.com/typesafely/try.git
+$ cd try
+$ mvn package
+```
+
+You'll find the `jar` under the usual `target` directory.
+
+## Bugs and Feedback ##
+
+For bugs, questions and discussions please use the [Github Issues](https://github.com/typesafely/try/issues).
+
