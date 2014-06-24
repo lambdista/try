@@ -268,11 +268,13 @@ public abstract class Try<T> {
             }
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <U> Try<U> recover(Function<? super Exception, ? extends U> recoverFunc) {
             return (Try<U>) this;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <U> Try<U> recoverWith(Function<? super Exception, ? extends Try<U>> recoverFunc) {
             return (Try<U>) this;
@@ -361,11 +363,13 @@ public abstract class Try<T> {
         public void forEach(Consumer<? super T> action) {
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <U> Try<U> map(Function<? super T, ? extends U> mapper) {
             return (Try<U>) this;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <U> Try<U> flatMap(Function<? super T, ? extends Try<U>> mapper) {
             return (Try<U>) this;
@@ -427,9 +431,8 @@ public abstract class Try<T> {
 
             Failure failure = (Failure) o;
 
-            if (!exception.equals(failure.exception)) return false;
+            return failure.exception.equals(exception);
 
-            return true;
         }
 
         @Override

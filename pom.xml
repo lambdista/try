@@ -48,6 +48,17 @@
                     <mainClass>org.typesafely.example.MainExample</mainClass>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/org/typesafely/example/*</exclude>
+                        <exclude>**/org/typesafely/util/TryTest*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

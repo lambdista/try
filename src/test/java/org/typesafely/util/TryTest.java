@@ -319,7 +319,7 @@ public class TryTest {
                 this::success
         );
         Try<Integer> out = result.orElse(new Try.Success<>(84));
-        assertEquals("out must be Success(42)", out, new Try.Success(42));
+        assertEquals("out must be Success(42)", out, new Try.Success<>(42));
     }
     @Test
     public void testOrElseAgainstAFailure() {
@@ -327,7 +327,7 @@ public class TryTest {
                 this::failure
         );
         Try<Integer> out = result.orElse(new Try.Success<>(84));
-        assertEquals("out must be Success(84)", out, new Try.Success(84));
+        assertEquals("out must be Success(84)", out, new Try.Success<>(84));
     }
 
 
