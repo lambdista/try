@@ -53,5 +53,8 @@ x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)))
 Apart from `map` and `flatMap`, `Try` has many other useful methods. See the `TryTest`
 class for a thorough coverage of all methods.
 
+## Javadoc ##
+<a href="http://typesafely.github.io/try-success-failure/apidocs/">Here</a> you can find the Javadoc for this API.
+
 ## Final Notes ##
 Any criticism/suggestion is more than welcome!
