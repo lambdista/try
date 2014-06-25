@@ -25,16 +25,16 @@ import java.util.function.Predicate;
  * <p>The {@code Try} type represents a computation that may fail. If the computation is successful returns
  * the value wrapped in a {@link Success} otherwise returns the
  * {@link java.lang.Exception} wrapped in a {@link Failure}.</p>
- * <p>
+ *
  * <p>To use {@code Try} you need to call the {@link Try#apply(FailableSupplier)} method passing in a lambda with
  * the same signature used for a common {@link java.util.function.Supplier}.
  * Indeed {@link FailableSupplier} is just a {@link java.util.function.Supplier} with a
  * {@code 'throws Exception'} added to its {@code 'get'} method.</p>
- * <p>
+ *
  * <p>For example, {@code Try} can be used to perform division on a user-defined input, without the need to do explicit
  * exception-handling in all of the places that an exception might occur.</p>
- * <p>
- * <p>An important property of {@code Try} shown in the {@link org.typesafely.example.MainExample#divide()} method is its ability
+ *
+ * <p>An important property of {@code Try} shown in the {@link org.typesafely.example.SumAndDivide#divide()} method is its ability
  * to <i>pipeline (chain if you prefer)</i>  operations,
  * catching exceptions along the way thanks to its {@link Try#flatMap(java.util.function.Function)} method. If you
  * are not a seasoned functional programming geek concepts such as {@code flatMap/map} might not be easy to grasp
@@ -45,13 +45,13 @@ import java.util.function.Predicate;
  * {@code flatMap} calls and a last call to {@code map}. E.g.: Suppose you have 3 variables (x, y and z) being
  * of type {@code Try<Integer>} and you just wanto to sum them up. The code you need for doing that is the
  * following:</p>
- * <p>
+ *
  * <pre>
  * x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)))
  * </pre>
- * <p>
+ *
  * Apart from {@code map} and {@code flatMap}, {@code Try} has many other useful methods. See the {@code TryTest}
- * test class for a thorough coverage of all {@code Try}'s methods.
+ * class for a thorough coverage of all {@code Try}'s methods.
  *
  * @param <T> the type returned by the computation
  * @author Alessandro Lacava

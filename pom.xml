@@ -9,6 +9,18 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
+    <name>Try-Success-Failure for Java 8</name>
+    <description>Implementation of the Scala's Try-Success-Failure's API for Java 8</description>
+    <url>http://typesafely.github.io/try/</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -44,9 +56,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <mainClass>org.typesafely.example.MainExample</mainClass>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

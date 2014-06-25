@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Alessandro Lacava
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,39 +17,24 @@ package org.typesafely.example;
 
 import org.typesafely.util.Try;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 /**
- * A simple client example of the {@code Try-Success-Failure} API
+ * Sum and divide example
  *
  * @author Alessandro Lacava
  * @since 2014-06-20
  */
-public class MainExample {
+public class SumAndDivide {
 
     public static void main(String[] args) {
 
-        Try<String> result = Try.apply(
-                () -> success1() + success2()
-        );
-        result.forEach(
-                s -> System.out.println("result against a success: " + s)
-        );
+        sum();
 
-        Try<Integer> result1 = Try.apply(MainExample::failure1);
-        Try<Integer> result2 = Try.apply(MainExample::failure2);
-        System.out.println("flatMap against failures: " + result1.flatMap(i -> result2.map(j -> i + j)).getOrElse(42));
+        divide();
+    }
 
-        Try<Integer> resultOfFailure = Try.apply(
-                () -> {
-                    int res0 = 1;
-                    int res1 = failure1();
-                    int res2 = failure2();
-                    return res0 + res1 + res2;
-                }
-        );
-        System.out.println("getOrElse against failures: " + resultOfFailure.getOrElse(42));
+    public static void sum() {
 
         Try<Integer> x = Try.apply(() -> 3);
         Try<Integer> y = Try.apply(() -> 6);
@@ -58,24 +43,6 @@ public class MainExample {
         Try<Integer> res = x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)));
 
         res.forEach(sum -> System.out.println("The sum is: " + sum));
-
-        divide();
-    }
-
-    public static Integer failure1() throws IOException {
-        throw new IOException("File not found");
-    }
-
-    public static Integer failure2() throws IllegalArgumentException {
-        throw new IllegalArgumentException("param not valid");
-    }
-
-    public static String success1() {
-        return "Hello ";
-    }
-
-    public static String success2() {
-        return "World!";
     }
 
     /**
@@ -90,12 +57,11 @@ public class MainExample {
      * {@code flatMap} calls and a last call to {@code map}. E.g.: Suppose you have 3 variables (x, y and z) being
      * of type {@code Try<Integer>} and you just wanto to sum them up. The code you need for doing that is the
      * following:
-     *
+     * <p/>
      * x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)))
-     *
+     * <p/>
      * Apart from {@code map} and {@code flatMap}, {@code Try} has many other useful methods. See the {@code TryTest}
      * test class for a thorough coverage of all {@code Try}'s methods.
-     *
      */
     public static void divide() {
         System.out.println("Integer division");
