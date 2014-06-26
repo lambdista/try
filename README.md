@@ -12,6 +12,42 @@ the same signature used for a common `java.util.function.Supplier`.
 Indeed `FailableSupplier` is just a `java.util.function.Supplier` with a
 `throws Exception` added to its `get` method.
 
+## Examples ##
+### Read a file line by line ###
+As a first example consider the code you need to implement a method to read a file line by line in Java 8. 
+Using the traditional `try-catch` block you would implement as follows:
+
+```java
+public static List<String> readFile(String file) {
+
+    List<String> lines;
+    try {
+        lines = Files.readAllLines(new File(file).toPath());
+    } catch (IOException e) {
+        lines = Arrays.asList("Could not read the file: " + file);
+    }
+
+    return lines;
+}
+```
+
+`readFile` reads the content of a file, line by line, into a `List<String>`. In case of exception the method
+returns a `List<String>` with just one line: *"Could not read..."*. 
+
+However, using the `Try` API the previous method becomes:
+
+```java
+public static List<String> readFile(String file) {
+
+    return Try.apply(() -> Files.readAllLines(new File(file).toPath()))
+            .getOrElse(Arrays.asList("Could not read the file: " + file));
+
+}
+```
+
+Which version do you like more? :-)
+
+### Integer division ###
 For example, `Try` can be used to perform division on a user-defined input, without the need to do explicit
 exception-handling in all of the places that an exception might occur:
 
@@ -42,7 +78,10 @@ at first. However you'll get used to them and, in the end, you'll love them. Mor
 these methods more and more often since some important Java 8 classes already implement them
 (e.g. `java.util.Optional` and `java.util.stream.Stream`. Anyway for the moment just take for
 granted that to pipeline more than two operations, say N, you just need to chain them by using N - 1
-`flatMap` calls and a last call to `map`. E.g.: Suppose you have 3 variables (x, y and z) being
+`flatMap` calls and a last call to `map`. 
+
+### Integer sum ###
+Suppose you have 3 variables (x, y and z) being
 of type `Try<Integer>` and you just want to sum them up. The code you need for doing that is the
 following:
 
