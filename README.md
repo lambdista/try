@@ -15,7 +15,7 @@ Indeed `FailableSupplier` is just a `java.util.function.Supplier` with a
 ## Examples ##
 ### Read a file line by line ###
 As a first example consider the code you need to implement a method to read a file line by line in Java 8. 
-Using the traditional `try-catch` block you would implement as follows:
+Using the traditional `try-catch` block you would implement it as follows:
 
 ```java
 public static List<String> readFile(String file) {
@@ -48,7 +48,7 @@ public static List<String> readFile(String file) {
 Which version do you like more? :-)
 
 ### Integer division ###
-For example, `Try` can be used to perform division on a user-defined input, without the need to do explicit
+As another example, `Try` can be used to perform division on a user-defined input, without the need to do explicit
 exception-handling in all of the places that an exception might occur:
 
 ```java
@@ -65,7 +65,7 @@ Try<String> resultTryStr = result.map(i -> "The result of division is: " + i);
 String resultStr = resultTryStr.getOrElse("The integers you entered are not valid or the divisor is zero.");
 System.out.println(resultStr);
 ```
-In the previous example if you enter two valid integers with the second one--the divisor--being different from zero
+In this case if you enter two valid integers with the second one--the divisor--being different from zero
 then the code prints out `The result of division is: $RESULT`, where `$RESULT` is the division between the first
 and the second number. On the other hand, if you either enter non valid integers--such as a string--or the second
 number is zero then you'll get the message `The integers you entered are not valid or the divisor is zero.`
@@ -78,7 +78,7 @@ at first. However you'll get used to them and, in the end, you'll love them. Mor
 these methods more and more often since some important Java 8 classes already implement them
 (e.g. `java.util.Optional` and `java.util.stream.Stream`. Anyway for the moment just take for
 granted that to pipeline more than two operations, say N, you just need to chain them by using N - 1
-`flatMap` calls and a last call to `map`. 
+`flatMap` calls and a last call to `map` (see the **Integer sum** example).
 
 ### Integer sum ###
 Suppose you have 3 variables (x, y and z) being
@@ -89,7 +89,7 @@ following:
 x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)))
 ```
 
-Apart from `map` and `flatMap`, `Try` has many other useful methods. See the `TryTest`
+Apart from the methods seen in these examples, such as `map`, `flatMap` and `getOrElse`, `Try` has many other useful methods. See the `TryTest`
 class for a thorough coverage of all methods.
 
 ## Javadoc ##
