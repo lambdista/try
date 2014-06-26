@@ -43,7 +43,47 @@ the same signature used for a common <code>java.util.function.Supplier</code>.
 Indeed <code>FailableSupplier</code> is just a <code>java.util.function.Supplier</code> with a
 <code>throws Exception</code> added to its <code>get</code> method.</p>
 
-<p>For example, <code>Try</code> can be used to perform division on a user-defined input, without the need to do explicit
+<h2>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<h3>
+<a name="read-a-file-line-by-line" class="anchor" href="#read-a-file-line-by-line"><span class="octicon octicon-link"></span></a>Read a file line by line</h3>
+
+<p>As a first example consider the code you need to implement a method to read a file line by line in Java 8. 
+Using the traditional <code>try-catch</code> block you would implement it as follows:</p>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">readFile</span><span class="o">(</span><span class="n">String</span> <span class="n">file</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">lines</span><span class="o">;</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">Files</span><span class="o">.</span><span class="na">readAllLines</span><span class="o">(</span><span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="n">file</span><span class="o">).</span><span class="na">toPath</span><span class="o">());</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"Could not read the file: "</span> <span class="o">+</span> <span class="n">file</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="n">lines</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+
+<p><code>readFile</code> reads the content of a file, line by line, into a <code>List&lt;String&gt;</code>. In case of exception the method
+returns a <code>List&lt;String&gt;</code> with just one line: <em>"Could not read..."</em>. </p>
+
+<p>However, using the <code>Try</code> API the previous method becomes:</p>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">readFile</span><span class="o">(</span><span class="n">String</span> <span class="n">file</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">return</span> <span class="n">Try</span><span class="o">.</span><span class="na">apply</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">Files</span><span class="o">.</span><span class="na">readAllLines</span><span class="o">(</span><span class="k">new</span> <span class="nf">File</span><span class="o">(</span><span class="n">file</span><span class="o">).</span><span class="na">toPath</span><span class="o">()))</span>
+            <span class="o">.</span><span class="na">getOrElse</span><span class="o">(</span><span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"Could not read the file: "</span> <span class="o">+</span> <span class="n">file</span><span class="o">));</span>
+
+<span class="o">}</span>
+</pre></div>
+
+<p>Which version do you like more? :-)</p>
+
+<h3>
+<a name="integer-division" class="anchor" href="#integer-division"><span class="octicon octicon-link"></span></a>Integer division</h3>
+
+<p>As another example, <code>Try</code> can be used to perform division on a user-defined input, without the need to do explicit
 exception-handling in all of the places that an exception might occur:</p>
 
 <div class="highlight highlight-java"><pre><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Integer division"</span><span class="o">);</span>
@@ -60,7 +100,7 @@ exception-handling in all of the places that an exception might occur:</p>
 <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">resultStr</span><span class="o">);</span>
 </pre></div>
 
-<p>In the previous example if you enter two valid integers with the second one--the divisor--being different from zero
+<p>In this case if you enter two valid integers with the second one--the divisor--being different from zero
 then the code prints out <code>The result of division is: $RESULT</code>, where <code>$RESULT</code> is the division between the first
 and the second number. On the other hand, if you either enter non valid integers--such as a string--or the second
 number is zero then you'll get the message <code>The integers you entered are not valid or the divisor is zero.</code>
@@ -73,14 +113,19 @@ at first. However you'll get used to them and, in the end, you'll love them. Mor
 these methods more and more often since some important Java 8 classes already implement them
 (e.g. <code>java.util.Optional</code> and <code>java.util.stream.Stream</code>. Anyway for the moment just take for
 granted that to pipeline more than two operations, say N, you just need to chain them by using N - 1
-<code>flatMap</code> calls and a last call to <code>map</code>. E.g.: Suppose you have 3 variables (x, y and z) being
+<code>flatMap</code> calls and a last call to <code>map</code> (see the <strong>Integer sum</strong> example).</p>
+
+<h3>
+<a name="integer-sum" class="anchor" href="#integer-sum"><span class="octicon octicon-link"></span></a>Integer sum</h3>
+
+<p>Suppose you have 3 variables (x, y and z) being
 of type <code>Try&lt;Integer&gt;</code> and you just want to sum them up. The code you need for doing that is the
 following:</p>
 
 <div class="highlight highlight-java"><pre><span class="n">x</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="n">z</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">c</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="o">)))</span>
 </pre></div>
 
-<p>Apart from <code>map</code> and <code>flatMap</code>, <code>Try</code> has many other useful methods. See the <code>TryTest</code>
+<p>Apart from the methods seen in these examples, such as <code>map</code>, <code>flatMap</code> and <code>getOrElse</code>, <code>Try</code> has many other useful methods. See the <code>TryTest</code>
 class for a thorough coverage of all methods.</p>
 
 <h2>
