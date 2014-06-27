@@ -17,6 +17,7 @@ package org.typesafely.example;
 
 import org.typesafely.util.Try;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -29,53 +30,79 @@ public class SumAndDivide {
 
     public static void main(String[] args) {
 
-        sum();
+        System.out.println("Sum using the try-catch block");
+        sumWithoutTry("1", "2", "3");
 
-        divide();
+        System.out.println("Sum using the Try-Success-Failure API");
+        sumWithTry("1", "2", "3");
+
+        System.out.println("Integer division using the try-catch block");
+        divideWithoutTry();
+
+        System.out.println("Integer division using the Try-Success-Failure API");
+        divideWithTry();
     }
 
-    public static void sum() {
+    public static void sumWithoutTry(String first, String second, String third) {
 
-        Try<Integer> x = Try.apply(() -> 3);
-        Try<Integer> y = Try.apply(() -> 6);
-        Try<Integer> z = Try.apply(() -> 9);
+        int x, y, z;
+        try {
+            x = Integer.parseInt(first);
+            y = Integer.parseInt(second);
+            z = Integer.parseInt(third);
+            System.out.println("The sum is: " + (x + y + z));
+        } catch (NumberFormatException e) {
+        }
+    }
+
+    public static void sumWithTry(String first, String second, String third) {
+
+        Try<Integer> x = Try.apply(() -> Integer.parseInt(first));
+        Try<Integer> y = Try.apply(() -> Integer.parseInt(second));
+        Try<Integer> z = Try.apply(() -> Integer.parseInt(third));
 
         Try<Integer> res = x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)));
+
+        /* Note that this example is implemented this way just to show you the Try's chaining peculiarity.
+           Of course if the sum was what you just needed then you could have obtained it much more easily as follows:
+
+           Try<Integer> res = Try.apply(() ->
+                Integer.parseInt(first) + Integer.parseInt(second) + Integer.parseInt(third)
+           );
+
+         */
 
         res.forEach(sum -> System.out.println("The sum is: " + sum));
     }
 
-    /**
-     * An important property of {@code Try} shown in the {@code divide()} example is its ability
-     * to <i>pipeline</i> (<i>chain</i> if you prefer)  operations,
-     * catching exceptions along the way thanks to its {@code flatMap} method. If you
-     * are not a seasoned functional programming geek concepts such as {@code flatMap/map} might not be easy to grasp
-     * at first. However you'll get used to them and, in the end, you'll love them. Moreover you're going to encounter
-     * these methods more and more often since some important Java 8 classes already implement them
-     * (e.g. {@link java.util.Optional} and {@link java.util.stream.Stream}. Anyway for the moment just take for
-     * granted that to pipeline more than two operations, say N, you just need to chain them by using N - 1
-     * {@code flatMap} calls and a last call to {@code map}. E.g.: Suppose you have 3 variables (x, y and z) being
-     * of type {@code Try<Integer>} and you just wanto to sum them up. The code you need for doing that is the
-     * following:
-     * <p/>
-     * x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)))
-     * <p/>
-     * Apart from {@code map} and {@code flatMap}, {@code Try} has many other useful methods. See the {@code TryTest}
-     * test class for a thorough coverage of all {@code Try}'s methods.
-     */
-    public static void divide() {
-        System.out.println("Integer division");
+
+    public static void divideWithoutTry() {
+
         System.out.println("Enter the dividend press Return and then enter the divisor: ");
         Scanner dividend = new Scanner(System.in);
         Scanner divisor = new Scanner(System.in);
 
-        Try<Integer> num = Try.apply(dividend::nextInt);
-        Try<Integer> denom = Try.apply(divisor::nextInt);
+        String res;
+        try {
+            res = "The result of division is: " + (dividend.nextInt() / divisor.nextInt());
+        } catch(InputMismatchException|ArithmeticException e) {
+            res = "The integers you entered are not valid or the divisor is zero.";
+        }
 
-        Try<Integer> result = num.flatMap(x -> denom.map(y -> x / y));
-        Try<String> resultTryStr = result.map(i -> "The result of division is: " + i);
-        String resultStr = resultTryStr.getOrElse("The integers you entered are not valid or the divisor is zero.");
-        System.out.println(resultStr);
+        System.out.println(res);
+    }
+
+    public static void divideWithTry() {
+
+        System.out.println("Enter the dividend press Return and then enter the divisor: ");
+        Scanner dividend = new Scanner(System.in);
+        Scanner divisor = new Scanner(System.in);
+
+        String res = Try.apply(() -> dividend.nextInt() / divisor.nextInt())
+                .map(division -> "The result of division is: " + division)
+                .getOrElse("The integers you entered are not valid or the divisor is zero.");
+
+        System.out.println(res);
     }
 
 }
