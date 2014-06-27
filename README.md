@@ -16,7 +16,7 @@ Indeed there are cases where you would use the traditional `try-catch` pattern b
 a more *fluent interface* to deal with exceptions.
 
 ## Build ##
-This project is managed with [Maven](http://maven.apache.org/) project. So it can be built using:
+This project is managed with [Maven](http://maven.apache.org/) so it can be built using:
 
 ```
 $ git clone https://github.com/typesafely/try.git
@@ -78,7 +78,8 @@ type inferer there's no need to specify the type for `Try` in the previous code.
 `Try.<List<String>>apply(() -> Files.readAllLines(new File(file).toPath()))` where you explicitly say that
 the `Try`'s type is `List<String>`.
 
-Which version do you like more? It may be a matter of taste or just because I'm used to it but I prefer the latter--also
+Which version do you like more? The `try-catch` approach or the `Try` one? 
+It may be a matter of taste or just because I'm used to it but I prefer the latter--also
 because otherwise I wouldn't have written this API! :-)
 
 ### Example 2: Integer division ###
@@ -101,11 +102,11 @@ System.out.println(res);
 The previous code asks the user to enter two integers and then performs their division. The problem is that it could
 throw two types of unchecked exceptions and the compiler of course wouldn't tell you. You are required to know it 
 yourself. The two unchecked exceptions I'm talking about are `java.util.InputMismatchException` and 
-`java.lang.ArithmeticException` if the user enter a non-integer or zero as the second number, respectively. Now,
-if you have a decent mathematical background you know you can't divide by zero and you can also imagine that
-`Scanner`'s `nextInt` method may throw some type of exeption if you enter a non-integer. However, in both cases
+`java.lang.ArithmeticException` if the user enter a non-integer or zero as the divisor, respectively. Now,
+if you have a decent mathematical background you know you can't divide by zero. Furthermore you can also imagine that
+`Scanner`'s `nextInt` method may throw some type of exception if you enter a non-integer. However, in both cases
 you have to look up the type of exception. Yes, you can use a generic `catch(Exception e)` and capture them all if you're
-not interested in the specific type or you could avoid using `try-catch` at all thanks to `Try`. Here are both 
+not interested in the specific type or you could avoid using `try-catch` in the first place thanks to `Try`. Here are both 
 implementations.
 #### Using the traditional try-catch block ####
 ```java
@@ -152,8 +153,9 @@ passing a `String` to it.
 ### Integer sum ###
 An important property of `Try` is its ability
 to *pipeline* (*chain* if you prefer)  operations, catching exceptions along the way thanks to its `flatMap` method.
-If you are not a seasoned functional programmer concepts such as `flatMap/map` might not be easy to grasp
-at first. However you'll get used to them and, in the end, you'll love them. Moreover you're going to encounter
+If you are not a functional programmer concepts such as `flatMap/map` might not be easy to grasp
+at first. However you'll get used to them when you become one and, in the end, you'll love them. 
+Moreover you're going to encounter
 these methods more and more often since some important Java 8 classes already implement them
 (e.g. `java.util.Optional` and `java.util.stream.Stream`). Anyway for the moment just take for
 granted that to pipeline more than two operations, say N, you just need to chain them by using N - 1
@@ -171,6 +173,8 @@ has many other useful methods. See the `TryTest` class for a thorough coverage o
 <a href="http://typesafely.github.io/try/apidocs/">API documentation</a> for this project.
 
 ## Bugs and Feedback ##
-
 For bugs, questions and discussions please use the [Github Issues](https://github.com/typesafely/try/issues).
+
+## Conclusion ##
+What else to say? Give Try a try (pun intended :-)) you won't regret once you get used to it.
 
