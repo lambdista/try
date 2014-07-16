@@ -104,10 +104,10 @@ public static String urlToString(String url, String errorMessage) {
 
 `urlToString` reads the content of a URL into a `String`. The method takes two parameters: `url` which is the 
 `String` representing the URL and `errorMessage` which is the `String` to return if the URL content retrieving fails. 
-Notice the boilerplate code. You need to initialize the `Scanner` reference
+Notice the boilerplate code. You need to initialize the `scanner` reference
 to `null`. You also have to use a finally block and close the `Scanner` object after checking if it is not `null`.
 Wouldn't it be great if you could avoid such a boilerplate code and let an API do it for you? Well, take a look
-at the, semantically, same code in the following example implemented using `Try-Success-Failure`.
+at the, semantically, same code in the following example.
 
 #### Using the Try API ####
 ```java
@@ -126,13 +126,15 @@ into a `Try<String>`, taking care of the fact that if the result
 of `Try.apply` is a `Failure<Scanner>` now it just becomes a `Failure<String>` otherwise it gets mapped into a 
 `Success<String>`. `getOrElse` then extracts its content (a `String`) if it's a `Success` or returns `errorMessage` if
 it's a `Failure`. Afterward the `forEach` method takes care of closing the `Scanner` object if it is of type
-`Success<Scanner>` otherwise it does nothing. Finally the result is returned. Typically you use `map` to transform
-something into something else while you employ `forEach` to *consume* something, that is to use it someway. As a matter
-of fact `forEach` return type is `void`.
+`Success<Scanner>` otherwise it does nothing. Finally the result is returned. 
+
+Typically you use `map` to transform something into something else, 
+while you employ `forEach` to *consume* something, that is to use it someway. As a matter of fact 
+`forEach` has a `void` return type.
 
 The `Try` version is declarative whilst the `try-catch-finally` one is imperative. Expressing the `Try` version in 
 words you have: "*Try* to create a `Scanner` object for the given URL. Afterward *map* this object into a `String` *or else*
-use this other `String` if it's a failure. In the end close the `Scanner` object. 
+use this other `String` if it's a failure. In the end close the `Scanner` object." 
 
 ### Example 3: Integer division ###
 This is an interesting one because it shows another peculiarity of the `Try` API. You may already know that Java
