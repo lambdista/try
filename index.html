@@ -124,7 +124,65 @@ It may be a matter of taste or just because I'm used to it but I prefer the latt
 because otherwise I wouldn't have written this API! :-)</p>
 
 <h3>
-<a name="example-2-integer-division" class="anchor" href="#example-2-integer-division"><span class="octicon octicon-link"></span></a>Example 2: Integer division</h3>
+<a name="example-2-read-the-content-of-a-url-into-a-string" class="anchor" href="#example-2-read-the-content-of-a-url-into-a-string"><span class="octicon octicon-link"></span></a>Example 2: Read the content of a URL into a String</h3>
+
+<h4>
+<a name="using-the-traditional-try-catch-finally-block" class="anchor" href="#using-the-traditional-try-catch-finally-block"><span class="octicon octicon-link"></span></a>Using the traditional try-catch-finally block</h4>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">urlToString</span><span class="o">(</span><span class="n">String</span> <span class="n">url</span><span class="o">,</span> <span class="n">String</span> <span class="n">errorMessage</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Scanner</span> <span class="n">scanner</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="n">scanner</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Scanner</span><span class="o">(</span><span class="k">new</span> <span class="nf">URL</span><span class="o">(</span><span class="n">url</span><span class="o">).</span><span class="na">openStream</span><span class="o">(),</span> <span class="s">"UTF-8"</span><span class="o">);</span>
+        <span class="n">String</span> <span class="n">result</span> <span class="o">=</span> <span class="n">scanner</span><span class="o">.</span><span class="na">useDelimiter</span><span class="o">(</span><span class="s">"\\A"</span><span class="o">).</span><span class="na">next</span><span class="o">();</span>
+        <span class="n">scanner</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">errorMessage</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">scanner</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">scanner</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p><code>urlToString</code> reads the content of a URL into a <code>String</code>. The method takes two parameters: <code>url</code> which is the 
+<code>String</code> representing the URL and <code>errorMessage</code> which is the <code>String</code> to return if the URL content retrieving fails. 
+Notice the boilerplate code. You need to initialize the <code>scanner</code> reference
+to <code>null</code>. You also have to use a finally block and close the <code>Scanner</code> object after checking if it is not <code>null</code>.
+Wouldn't it be great if you could avoid such a boilerplate code and let an API do it for you? Well, take a look
+at the, semantically, same code in the following example.</p>
+
+<h4>
+<a name="using-the-try-api-1" class="anchor" href="#using-the-try-api-1"><span class="octicon octicon-link"></span></a>Using the Try API</h4>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">urlToString</span><span class="o">(</span><span class="n">String</span> <span class="n">url</span><span class="o">,</span> <span class="n">String</span> <span class="n">errorMessage</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Try</span><span class="o">&lt;</span><span class="n">Scanner</span><span class="o">&gt;</span> <span class="n">scanner</span> <span class="o">=</span> <span class="n">Try</span><span class="o">.</span><span class="na">apply</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nf">Scanner</span><span class="o">(</span><span class="k">new</span> <span class="nf">URL</span><span class="o">(</span><span class="n">url</span><span class="o">).</span><span class="na">openStream</span><span class="o">(),</span> <span class="s">"UTF-8"</span><span class="o">));</span>
+    <span class="n">String</span> <span class="n">result</span> <span class="o">=</span> <span class="n">scanner</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">.</span><span class="na">useDelimiter</span><span class="o">(</span><span class="s">"\\A"</span><span class="o">).</span><span class="na">next</span><span class="o">()).</span><span class="na">getOrElse</span><span class="o">(</span><span class="n">errorMessage</span><span class="o">);</span>
+    <span class="n">scanner</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">.</span><span class="na">close</span><span class="o">());</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>Look ma, no <code>null</code> initialization, no <code>try-catch-finally</code> block and no <code>null</code> check before closing <code>scanner</code>!
+The first line of the method creates a <code>Try&lt;Scanner&gt;</code> object which can be, as usual, a <code>Success&lt;Scanner&gt;</code> or a 
+<code>Failure&lt;Scanner&gt;</code> depending on the result of the lambda. The <code>map</code> method is then used to transform it 
+into a <code>Try&lt;String&gt;</code>, taking care of the fact that if the result
+of <code>Try.apply</code> is a <code>Failure&lt;Scanner&gt;</code> now it just becomes a <code>Failure&lt;String&gt;</code> otherwise it gets mapped into a 
+<code>Success&lt;String&gt;</code>. <code>getOrElse</code> then extracts its content (a <code>String</code>) if it's a <code>Success</code> or returns <code>errorMessage</code> if
+it's a <code>Failure</code>. Afterward the <code>forEach</code> method takes care of closing the <code>Scanner</code> object if it is of type
+<code>Success&lt;Scanner&gt;</code> otherwise it does nothing. Finally the result is returned. </p>
+
+<p>Typically you use <code>map</code> to transform something into something else, 
+while you employ <code>forEach</code> to <em>consume</em> something, that is to use it someway. As a matter of fact 
+<code>forEach</code> has a <code>void</code> return type.</p>
+
+<p>The <code>Try</code> version is declarative whilst the <code>try-catch-finally</code> one is imperative. Expressing the <code>Try</code> version in 
+words you have: "<em>Try</em> to create a <code>Scanner</code> object for the given URL. Afterward <em>map</em> this object into a <code>String</code> <em>or else</em>
+use this other <code>String</code> if it's a failure. In the end close the <code>Scanner</code> object." </p>
+
+<h3>
+<a name="example-3-integer-division" class="anchor" href="#example-3-integer-division"><span class="octicon octicon-link"></span></a>Example 3: Integer division</h3>
 
 <p>This is an interesting one because it shows another peculiarity of the <code>Try</code> API. You may already know that Java
 has both checked and unchecked exceptions. For checked exceptions the compiler won't accept your code
@@ -173,7 +231,7 @@ implementations.</p>
 </pre></div>
 
 <h4>
-<a name="using-the-try-api-1" class="anchor" href="#using-the-try-api-1"><span class="octicon octicon-link"></span></a>Using the Try API</h4>
+<a name="using-the-try-api-2" class="anchor" href="#using-the-try-api-2"><span class="octicon octicon-link"></span></a>Using the Try API</h4>
 
 <div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">divideWithTry</span><span class="o">()</span> <span class="o">{</span>
 
