@@ -82,7 +82,59 @@ Which version do you like more? The `try-catch` approach or the `Try` one?
 It may be a matter of taste or just because I'm used to it but I prefer the latter--also
 because otherwise I wouldn't have written this API! :-)
 
-### Example 2: Integer division ###
+### Example 2: Read the content of a URL into a String ###
+#### Using the traditional try-catch-finally block ####
+```java
+public static String urlToString(String url, String errorMessage) {
+    Scanner scanner = null;
+    try {
+        scanner = new Scanner(new URL(url).openStream(), "UTF-8");
+        String result = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return result;
+    } catch (IOException e) {
+        return errorMessage;
+    } finally {
+        if (scanner != null) {
+            scanner.close();
+        }
+    }
+}
+```
+
+`urlToString` reads the content of a URL into a `String`. The method takes two parameters: `url` which is the 
+`String` representing the URL and `errorMessage` which is the `String` to return if the URL content retrieving fails. 
+Notice the boilerplate code. You need to initialize the `Scanner` reference
+to `null`. You also have to use a finally block and close the `Scanner` object after checking if it is not `null`.
+Wouldn't it be great if you could avoid such a boilerplate code and let an API do it for you? Well, take a look
+at the, semantically, same code in the following example implemented using `Try-Success-Failure`.
+
+#### Using the Try API ####
+```java
+public static String urlToString(String url, String errorMessage) {
+    Try<Scanner> scanner = Try.apply(() -> new Scanner(new URL(url).openStream(), "UTF-8"));
+    String result = scanner.map(s -> s.useDelimiter("\\A").next()).getOrElse(errorMessage);
+    scanner.forEach(s -> s.close());
+    return result;
+}
+```
+
+Look ma, no `null` initialization, no `try-catch-finally` block and no `null` check before closing `scanner`!
+The first line of the method creates a `Try<Scanner>` object which can be, as usual, a `Success<Scanner>` or a 
+`Failure<Scanner>` depending on the result of the lambda. The `map` method is then used to transform it 
+into a `Try<String>`, taking care of the fact that if the result
+of `Try.apply` is a `Failure<Scanner>` now it just becomes a `Failure<String>` otherwise it gets mapped into a 
+`Success<String>`. `getOrElse` then extracts its content (a `String`) if it's a `Success` or returns `errorMessage` if
+it's a `Failure`. Afterward the `forEach` method takes care of closing the `Scanner` object if it is of type
+`Success<Scanner>` otherwise it does nothing. Finally the result is returned. Typically you use `map` to transform
+something into something else while you employ `forEach` to *consume* something, that is to use it someway. As a matter
+of fact `forEach` return type is `void`.
+
+The `Try` version is declarative whilst the `try-catch-finally` one is imperative. Expressing the `Try` version in 
+words you have: "*Try* to create a `Scanner` object for the given URL. Afterward *map* this object into a `String` *or else*
+use this other `String` if it's a failure. In the end close the `Scanner` object. 
+
+### Example 3: Integer division ###
 This is an interesting one because it shows another peculiarity of the `Try` API. You may already know that Java
 has both checked and unchecked exceptions. For checked exceptions the compiler won't accept your code
 if you forget to handle them. However unchecked exceptions such as `NullPointerException`, `IllegalArgumentException`,
@@ -149,6 +201,8 @@ mapped into another type without the need to do explicit exception-handling in a
 exception might occur. I mean if `dividend.nextInt() / divisor.nextInt()` caused an exception the result of `Try.apply`
 would be a `Try.Failure` instance. Nevertheless it's type would be `Try<String>`. This lets you call `getOrElse`
 passing a `String` to it.
+
+
 
 ### Integer sum ###
 An important property of `Try` is its ability
