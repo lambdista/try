@@ -99,7 +99,7 @@ public class SumAndDivide {
         Scanner divisor = new Scanner(System.in);
 
         String res = Try.apply(() -> dividend.nextInt() / divisor.nextInt())
-                .map(division -> "The result of division is: " + division)
+                .map(quotient -> "The result of division is: " + quotient)
                 .getOrElse("The integers you entered are not valid or the divisor is zero.");
 
         System.out.println(res);
