@@ -1,4 +1,5 @@
 *.class
+*.private.*
  
 # Package Files #
 *.jar
