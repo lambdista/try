@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.typesafely</groupId>
+    <groupId>com.lambdista</groupId>
     <artifactId>try</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>Try-Success-Failure for Java 8</name>
     <description>Implementation of the Scala's Try-Success-Failure's API for Java 8</description>
-    <url>http://typesafely.github.io/try/</url>
+    <url>http://lambdista.github.io/try/</url>
 
     <licenses>
         <license>
@@ -63,8 +63,8 @@
                 <version>2.4</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/org/typesafely/example/*</exclude>
-                        <exclude>**/org/typesafely/util/TryTest*</exclude>
+                        <exclude>**/org/lambdista/example/*</exclude>
+                        <exclude>**/org/lambdista/util/TryTest*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

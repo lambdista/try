@@ -19,7 +19,7 @@ a more *fluent interface* to deal with exceptions.
 This project is managed with [Maven](http://maven.apache.org/) so it can be built using:
 
 ```
-$ git clone https://github.com/typesafely/try.git
+$ git clone https://github.com/lambdista/try.git
 $ cd try
 $ mvn package
 ```
@@ -32,7 +32,7 @@ you can run the main classes representing the examples for this project. For ins
 class you can use:
 
 ```
-$ mvn exec:java -Dexec.mainClass="org.typesafely.example.ReadFileLines"
+$ mvn exec:java -Dexec.mainClass="com.lambdista.example.ReadFileLines"
 ```
 
 The changing part is the full path to the main class you intend to run.
@@ -226,10 +226,10 @@ Apart from the methods seen in these examples, such as `map`, `flatMap` and `get
 has many other useful methods. See the `TryTest` class for a thorough coverage of all its methods.
 
 ## Javadoc ##
-<a href="http://typesafely.github.io/try/apidocs/">API documentation</a> for this project.
+<a href="http://lambdista.github.io/try/apidocs/">API documentation</a> for this project.
 
 ## Bugs and Feedback ##
-For bugs, questions and discussions please use the [Github Issues](https://github.com/typesafely/try/issues).
+For bugs, questions and discussions please use the [Github Issues](https://github.com/lambdista/try/issues).
 
 ## Conclusion ##
 What else to say? Give Try a try (pun intended :-)) you won't regret once you get used to it.
