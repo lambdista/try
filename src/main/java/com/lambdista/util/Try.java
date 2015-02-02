@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.typesafely.util;
+package com.lambdista.util;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -34,7 +34,7 @@ import java.util.function.Predicate;
  * <p>For example, {@code Try} can be used to perform division on a user-defined input, without the need to do explicit
  * exception-handling in all of the places that an exception might occur.</p>
  *
- * <p>An important property of {@code Try} shown in the {@link org.typesafely.example.SumAndDivide#divideWithTry()} method is its ability
+ * <p>An important property of {@code Try} shown in the {@link com.lambdista.example.SumAndDivide#divideWithTry()} method is its ability
  * to <i>pipeline (chain if you prefer)</i>  operations,
  * catching exceptions along the way thanks to its {@link Try#flatMap(java.util.function.Function)} method. If you
  * are not a seasoned functional programming geek concepts such as {@code flatMap/map} might not be easy to grasp

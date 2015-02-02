@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.typesafely.util;
+package com.lambdista.util;
 
 /**
  * This class is semantically the same as the {@link java.util.function.Supplier} class apart from the fact that

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.typesafely.example;
+package com.lambdista.example;
 
-import org.typesafely.util.Try;
+import com.lambdista.util.Try;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;

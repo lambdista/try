@@ -1,6 +1,6 @@
-package org.typesafely.example;
+package com.lambdista.example;
 
-import org.typesafely.util.Try;
+import com.lambdista.util.Try;
 
 import java.io.IOException;
 import java.net.URL;

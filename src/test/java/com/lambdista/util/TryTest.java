@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.typesafely.util;
+package com.lambdista.util;
 
+import com.lambdista.util.Try;
 import org.junit.Test;
 
 import java.util.NoSuchElementException;
@@ -25,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the {@code Try-Success-Failure} API. It covers each and every method of
- * {@link org.typesafely.util.Try} in case of both success and failure
+ * {@link com.lambdista.util.Try} in case of both success and failure
  *
  * @author Alessandro Lacava
  * @since 2014-06-20
