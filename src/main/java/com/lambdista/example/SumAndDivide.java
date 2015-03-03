@@ -15,10 +15,13 @@
  */
 package com.lambdista.example;
 
+import com.google.common.base.Function;
+import com.lambdista.util.Consumer;
+import com.lambdista.util.FailableSupplier;
+import com.lambdista.util.Try;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
-import com.lambdista.util.Try;
 
 /**
  * Sum and divide example
@@ -54,13 +57,56 @@ public class SumAndDivide {
         } catch (NumberFormatException e) {}
     }
 
-    public static void sumWithTry(String first, String second, String third) {
+    public static void sumWithTry(final String first, final String second, final String third) {
 
-        Try<Integer> x = Try.apply(() -> Integer.parseInt(first));
-        Try<Integer> y = Try.apply(() -> Integer.parseInt(second));
-        Try<Integer> z = Try.apply(() -> Integer.parseInt(third));
+        Try<Integer> x = Try.apply(
+                new FailableSupplier<Integer>() {
+                    @Override
+                    public Integer get() throws Exception {
+                        return Integer.parseInt(first);
+                    }
+                }
+        );
+        final Try<Integer> y = Try.apply(
+                new FailableSupplier<Integer>() {
+                    @Override
+                    public Integer get() throws Exception {
+                        return Integer.parseInt(second);
+                    }
+                }
 
-        Try<Integer> res = x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)));
+        );
+        final Try<Integer> z = Try.apply(
+                new FailableSupplier<Integer>() {
+                    @Override
+                    public Integer get() throws Exception {
+                        return Integer.parseInt(third);
+                    }
+                }
+        );
+
+        Try<Integer> res = x.flatMap(
+                new Function<Integer, Try<Integer>>() {
+                    @Override
+                    public Try<Integer> apply(final Integer a) {
+                        return y.flatMap(
+                                new Function<Integer, Try<Integer>>() {
+                                    @Override
+                                    public Try<Integer> apply(final Integer b) {
+                                        return z.map(
+                                                new Function<Integer, Integer>() {
+                                                    @Override
+                                                    public Integer apply(Integer c) {
+                                                        return a + b + c;
+                                                    }
+                                                }
+                                        );
+                                    }
+                                }
+                        );
+                    }
+                }
+        );
 
         /* Note that this example is implemented this way just to show you the Try's chaining peculiarity.
            Of course if the sum was what you just needed then you could have obtained it much more easily as follows:
@@ -71,7 +117,14 @@ public class SumAndDivide {
 
          */
 
-        res.forEach(sum -> System.out.println("The sum is: " + sum));
+        res.forEach(
+                new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer sum) {
+                        System.out.println("The sum is: " + sum);
+                    }
+                }
+        );
     }
 
 
@@ -94,12 +147,24 @@ public class SumAndDivide {
     public static void divideWithTry() {
 
         System.out.println("Enter the dividend press Return and then enter the divisor: ");
-        Scanner dividend = new Scanner(System.in);
-        Scanner divisor = new Scanner(System.in);
+        final Scanner dividend = new Scanner(System.in);
+        final Scanner divisor = new Scanner(System.in);
 
-        String res = Try.apply(() -> dividend.nextInt() / divisor.nextInt())
-                .map(quotient -> "The quotient is: " + quotient)
-                .getOrElse("The integers you entered are not valid or the divisor is zero.");
+        String res = Try.apply(
+                new FailableSupplier<Integer>() {
+                    @Override
+                    public Integer get() throws Exception {
+                        return dividend.nextInt() / divisor.nextInt();
+                    }
+                }
+        ).map(
+                new Function<Integer, String>() {
+                    @Override
+                    public String apply(Integer quotient) {
+                        return "The quotient is: " + quotient;
+                    }
+                }
+        ).getOrElse("The integers you entered are not valid or the divisor is zero.");
 
         System.out.println(res);
     }

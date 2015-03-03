@@ -15,12 +15,15 @@
  */
 package com.lambdista.example;
 
+import com.lambdista.util.FailableSupplier;
 import com.lambdista.util.Try;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -35,11 +38,11 @@ public class ReadFileLines {
 
         List<String> lines = readFileWithoutTry("test.txt");
         System.out.println("File read using the try-catch block");
-        lines.forEach(System.out::println);
+        printLines(lines);
 
         lines = readFileWithTry("test.txt");
         System.out.println("File read using the Try-Success-Failure API");
-        lines.forEach(System.out::println);
+        printLines(lines);
 
     } 
 
@@ -47,7 +50,7 @@ public class ReadFileLines {
 
         List<String> lines;
         try {
-            lines = Files.readAllLines(new File(file).toPath());
+            lines = FileUtils.readLines(new File(file));
         } catch (IOException e) {
             lines = Arrays.asList("Could not read the file: " + file);
         }
@@ -55,10 +58,22 @@ public class ReadFileLines {
         return lines;
     }
 
-    public static List<String> readFileWithTry(String file) {
+    public static List<String> readFileWithTry(final String file) {
 
-        return Try.apply(() -> Files.readAllLines(new File(file).toPath()))
-                .getOrElse(Arrays.asList("Could not read the file: " + file));
+        return Try.apply(
+                new FailableSupplier<List<String>>() {
+                    @Override
+                    public List<String> get() throws Exception {
+                        return FileUtils.readLines(new File(file));
+                    }
+                }
+        ).getOrElse(Arrays.asList("Could not read the file: " + file));
 
+    }
+
+    private static void printLines(Collection<String> lines) {
+        for (String line: lines) {
+            System.out.println(line);
+        }
     }
 }

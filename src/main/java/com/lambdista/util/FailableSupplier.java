@@ -22,7 +22,6 @@ package com.lambdista.util;
  * @author Alessandro Lacava
  * @since 2014-06-20
  */
-@FunctionalInterface
 public interface FailableSupplier<T> {
 
     /**

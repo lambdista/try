@@ -1,5 +1,8 @@
 package com.lambdista.example;
 
+import com.google.common.base.Function;
+import com.lambdista.util.Consumer;
+import com.lambdista.util.FailableSupplier;
 import com.lambdista.util.Try;
 
 import java.io.IOException;
@@ -42,10 +45,34 @@ public class Url {
         }
     }
 
-    public static String urlToStringWithTry(String url, String errorMessage) {
-        Try<Scanner> scanner = Try.apply(() -> new Scanner(new URL(url).openStream(), "UTF-8"));
-        String result = scanner.map(s -> s.useDelimiter("\\A").next()).getOrElse(errorMessage);
-        scanner.forEach(s -> s.close());
+    public static String urlToStringWithTry(final String url, String errorMessage) {
+        Try<Scanner> scanner = Try.apply(
+                new FailableSupplier<Scanner>() {
+                    @Override
+                    public Scanner get() throws Exception {
+                        return new Scanner(new URL(url).openStream(), "UTF-8");
+                    }
+                }
+        );
+
+        String result = scanner.map(
+                new Function<Scanner, String>() {
+                    @Override
+                    public String apply(Scanner scanner) {
+                        return scanner.useDelimiter("\\A").next();
+                    }
+                }
+        ).getOrElse(errorMessage);
+
+
+        scanner.forEach(
+                new Consumer<Scanner>() {
+                    @Override
+                    public void accept(Scanner scanner) {
+                        scanner.close();
+                    }
+                }
+        );
         return result;
     }
 }
