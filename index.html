@@ -192,7 +192,7 @@ snippet:</p>
 
 <span class="pl-st">int</span> num <span class="pl-k">=</span> dividend<span class="pl-k">.</span>nextInt();
 <span class="pl-st">int</span> denum <span class="pl-k">=</span> divisor<span class="pl-k">.</span>nextInt();
-<span class="pl-stj">String</span> res <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>The result of division is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> (num <span class="pl-k">/</span> denum);
+<span class="pl-stj">String</span> res <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>The quotient is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> (num <span class="pl-k">/</span> denum);
 <span class="pl-stj">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(res);</pre></div>
 
 <p>The previous code asks the user to enter two integers and then performs their division. The problem is that it could
@@ -216,7 +216,7 @@ implementations.</p>
 
     <span class="pl-stj">String</span> res;
     <span class="pl-k">try</span> {
-        res <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>The result of division is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> (dividend<span class="pl-k">.</span>nextInt() <span class="pl-k">/</span> divisor<span class="pl-k">.</span>nextInt());
+        res <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>The quotient is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> (dividend<span class="pl-k">.</span>nextInt() <span class="pl-k">/</span> divisor<span class="pl-k">.</span>nextInt());
     } <span class="pl-k">catch</span>(<span class="pl-stj">InputMismatchException</span><span class="pl-k">|</span><span class="pl-stj">ArithmeticException</span> e) {
         res <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>The integers you entered are not valid or the divisor is zero.<span class="pl-pds">"</span></span>;
     }
@@ -234,7 +234,7 @@ implementations.</p>
     <span class="pl-stj">Scanner</span> divisor <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">Scanner</span>(<span class="pl-stj">System</span><span class="pl-k">.</span>in);
 
     <span class="pl-stj">String</span> res <span class="pl-k">=</span> <span class="pl-stj">Try</span><span class="pl-k">.</span>apply(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> dividend<span class="pl-k">.</span>nextInt() <span class="pl-k">/</span> divisor<span class="pl-k">.</span>nextInt())
-            .map(quotient <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-s1"><span class="pl-pds">"</span>The result of division is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> quotient)
+            .map(quotient <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-s1"><span class="pl-pds">"</span>The quotient is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> quotient)
             .getOrElse(<span class="pl-s1"><span class="pl-pds">"</span>The integers you entered are not valid or the divisor is zero.<span class="pl-pds">"</span></span>);
 
     <span class="pl-stj">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(res);
@@ -267,6 +267,24 @@ of type <code>Try&lt;Integer&gt;</code> and you just want to sum them up. Here i
 has many other useful methods. See the <code>TryTest</code> class for a thorough coverage of all its methods.</p>
 
 <h2>
+<a id="known-differences-with-the-original-library" class="anchor" href="#known-differences-with-the-original-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Known differences with the original library</h2>
+
+<h3>
+<a id="exception-handling" class="anchor" href="#exception-handling" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exception handling</h3>
+
+<p>In Scala exceptions are all unchecked so when you use the <code>get</code> method you're not forced to deal with the exception
+it throws in case this <code>Try</code> object is a <code>Failure</code>. In order to reflect this behaviour, calling <code>get</code> on <code>Failure</code>
+objects will throw a <code>GetOfFailureException</code> which wraps the original <code>Exception</code>. Since <code>GetOfFailureException</code> is
+unchecked you're not forced to handle it. However, if for some reason you need to deal with checked exceptions this
+API provides a further method, <code>checkedGet</code>, which may throw an <code>Exception</code> that must be handled.</p>
+
+<p>As a final note, the original library traps <code>Throwable</code> objects. This means that it also handles errors which are
+a subclass of <code>Error</code>. In general you should not catch <code>Error</code>s. As a matter of fact, the Java API describes <code>Error</code>
+starting with the following definition: "An Error is a subclass of <code>Throwable</code> that indicates serious problems that
+a reasonable application should not try to catch". For this reason I decided not to catch <code>Throwable</code>s but only
+<code>Exception</code>s.</p>
+
+<h2>
 <a id="javadoc" class="anchor" href="#javadoc" aria-hidden="true"><span class="octicon octicon-link"></span></a>Javadoc</h2>
 
 <p><a href="http://lambdista.github.io/try/apidocs/">API documentation</a> for this project.</p>
@@ -277,9 +295,18 @@ has many other useful methods. See the <code>TryTest</code> class for a thorough
 <p>For bugs, questions and discussions please use the <a href="https://github.com/lambdista/try/issues">Github Issues</a>.</p>
 
 <h2>
-<a id="conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
-<p>What else to say? Give Try a try (pun intended :-)) you won't regret once you get used to it.</p>
+<p>Copyright 2014 Alessandro Lacava.</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
+with the License. You may obtain a copy of the License at</p>
+
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and limitations under the License.</p>
         </section>
 
         <aside id="sidebar">
