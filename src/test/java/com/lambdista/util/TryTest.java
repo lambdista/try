@@ -58,12 +58,29 @@ public class TryTest {
         assertEquals("intResult must be 42", intResult, 42);
     }
 
-    @Test(expected = NumberFormatException.class)
-    public void testGetAgainstAFailure() throws Exception {
+    @Test(expected = GetOfFailureException.class)
+    public void testGetAgainstAFailure()  {
         Try<Integer> result = Try.apply(
                 this::failure
         );
         result.get();
+    }
+
+    @Test
+    public void testUncheckedGetAgainstASuccess() throws Exception {
+        Try<Integer> result = Try.apply(
+                this::success
+        );
+        int intResult = result.checkedGet();
+        assertEquals("intResult must be 42", intResult, 42);
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testCheckedGetAgainstAFailure() throws Exception {
+        Try<Integer> result = Try.apply(
+                this::failure
+        );
+        result.checkedGet();
     }
 
     @Test
@@ -76,7 +93,7 @@ public class TryTest {
         );
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = GetOfFailureException.class)
     public void testForEachAgainstAFailure() throws Exception {
         Try<Integer> result = Try.apply(
                 this::failure
@@ -85,7 +102,7 @@ public class TryTest {
                 i -> System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed")
         );
 
-        // Conversely, calling get mush throw the NumberFormatException captured in result
+        // Conversely, calling get mush throw the GetOfFailureException captured in result
         result.get();
     }
 
@@ -101,7 +118,7 @@ public class TryTest {
 
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = GetOfFailureException.class)
     public void testMapAgainstAFailure() throws Exception {
         Try<Integer> result = Try.apply(
                 this::failure
@@ -114,7 +131,7 @@ public class TryTest {
                 }
         );
 
-        // Conversely, calling get mush throw the NumberFormatException captured in result
+        // Conversely, calling get mush throw the GetOfFailureException captured in result
         result.get();
     }
 
@@ -133,7 +150,7 @@ public class TryTest {
         assertEquals("flatMappedResult must be Success(\"42, Hello World!\")", flatMappedResult, new Try.Success<>("42, Hello World!"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = GetOfFailureException.class)
     public void testFlatMapAgainstAFailure() throws Exception {
         Try<Integer> result = Try.apply(
                 this::failure
@@ -149,7 +166,7 @@ public class TryTest {
                 )
         );
 
-        // Conversely, calling get mush throw the NumberFormatException captured in result
+        // Conversely, calling get mush throw the GetOfFailureException captured in result
         chainedResult.get();
     }
 
@@ -163,7 +180,7 @@ public class TryTest {
         assertEquals("filteredResult must be Success(42)", filteredResult, new Try.Success<>(42));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = GetOfFailureException.class)
     public void testFilterAgainstAFailure() throws Exception {
         Try<Integer> result = Try.apply(
                 this::failure
@@ -176,11 +193,11 @@ public class TryTest {
                 }
         );
 
-        // Conversely, calling get mush throw the NumberFormatException captured in result
+        // Conversely, calling get mush throw the GetOfFailureException captured in result
         filteredResult.get();
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = GetOfFailureException.class)
     public void testNonMatchingFilter() throws Exception {
         Try<Integer> result = Try.apply(
                 this::success
@@ -190,7 +207,7 @@ public class TryTest {
                 i -> i != 42
         );
 
-        // In this case calling get mush throw a NoSuchElementException since the Predicate in filter does not hold
+        // In this case calling get mush throw a GetOfFailureException since the Predicate in filter does not hold
         filteredResult.get();
     }
 

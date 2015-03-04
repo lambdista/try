@@ -79,9 +79,16 @@ public abstract class Try<T> {
     /**
      * @return the value wrapped within {@code Success} if it's a {@code Success} or throws
      * the exception if {@code this} is a {@code Failure}
+     * @throws GetOfFailureException if {@code this} is a {@code Failure}
+     */
+    public abstract T get() throws GetOfFailureException;
+
+    /**
+     * @return the value wrapped within {@code Success} if it's a {@code Success} or throws the exception if {@code
+     * this} is a {@code Failure}
      * @throws Exception if {@code this} is a {@code Failure}
      */
-    public abstract T get() throws Exception;
+    public abstract T checkedGet() throws Exception;
 
     /**
      * Feeds the value to {@link Consumer}'s {@code accept} method if {@code this} is
@@ -237,6 +244,11 @@ public abstract class Try<T> {
         }
 
         @Override
+        public T checkedGet() {
+            return get();
+        }
+
+        @Override
         public void forEach(Consumer<? super T> action) {
             action.accept(value);
         }
@@ -339,9 +351,11 @@ public abstract class Try<T> {
     public static final class Failure<T> extends Try<T> {
 
         private final Exception exception;
+        private final GetOfFailureException unckeckedException;
 
         public Failure(Exception exception) {
             this.exception = exception;
+            this.unckeckedException = new GetOfFailureException(exception);
         }
 
         @Override
@@ -355,7 +369,12 @@ public abstract class Try<T> {
         }
 
         @Override
-        public T get() throws Exception {
+        public T get() {
+            throw unckeckedException;
+        }
+
+        @Override
+        public T checkedGet() throws Exception {
             throw exception;
         }
 

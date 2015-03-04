@@ -15,10 +15,10 @@
  */
 package com.lambdista.example;
 
-import com.lambdista.util.Try;
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+import com.lambdista.util.Try;
 
 /**
  * Sum and divide example
@@ -51,8 +51,7 @@ public class SumAndDivide {
             y = Integer.parseInt(second);
             z = Integer.parseInt(third);
             System.out.println("The sum is: " + (x + y + z));
-        } catch (NumberFormatException e) {
-        }
+        } catch (NumberFormatException e) {}
     }
 
     public static void sumWithTry(String first, String second, String third) {
@@ -84,8 +83,8 @@ public class SumAndDivide {
 
         String res;
         try {
-            res = "The result of division is: " + (dividend.nextInt() / divisor.nextInt());
-        } catch(InputMismatchException|ArithmeticException e) {
+            res = "The quotient is: " + (dividend.nextInt() / divisor.nextInt());
+        } catch (InputMismatchException | ArithmeticException e) {
             res = "The integers you entered are not valid or the divisor is zero.";
         }
 
@@ -99,7 +98,7 @@ public class SumAndDivide {
         Scanner divisor = new Scanner(System.in);
 
         String res = Try.apply(() -> dividend.nextInt() / divisor.nextInt())
-                .map(quotient -> "The result of division is: " + quotient)
+                .map(quotient -> "The quotient is: " + quotient)
                 .getOrElse("The integers you entered are not valid or the divisor is zero.");
 
         System.out.println(res);

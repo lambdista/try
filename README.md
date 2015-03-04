@@ -149,7 +149,7 @@ Scanner divisor = new Scanner(System.in);
 
 int num = dividend.nextInt();
 int denum = divisor.nextInt();
-String res = "The result of division is: " + (num / denum);
+String res = "The quotient is: " + (num / denum);
 System.out.println(res);
 ```
 
@@ -172,7 +172,7 @@ public static void divideWithoutTry() {
 
     String res;
     try {
-        res = "The result of division is: " + (dividend.nextInt() / divisor.nextInt());
+        res = "The quotient is: " + (dividend.nextInt() / divisor.nextInt());
     } catch(InputMismatchException|ArithmeticException e) {
         res = "The integers you entered are not valid or the divisor is zero.";
     }
@@ -190,7 +190,7 @@ public static void divideWithTry() {
     Scanner divisor = new Scanner(System.in);
 
     String res = Try.apply(() -> dividend.nextInt() / divisor.nextInt())
-            .map(quotient -> "The result of division is: " + quotient)
+            .map(quotient -> "The quotient is: " + quotient)
             .getOrElse("The integers you entered are not valid or the divisor is zero.");
 
     System.out.println(res);
@@ -224,6 +224,20 @@ x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)))
 
 Apart from the methods seen in these examples, such as `map`, `flatMap` and `getOrElse`, `Try` 
 has many other useful methods. See the `TryTest` class for a thorough coverage of all its methods.
+
+## Known differences with the original library ##
+### Exception handling ###
+In Scala exceptions are all unchecked so when you use the `get` method you're not forced to deal with the exception
+it throws in case this `Try` object is a `Failure`. In order to reflect this behaviour, calling `get` on `Failure`
+objects will throw a `GetOfFailureException` which wraps the original `Exception`. Since `GetOfFailureException` is
+unchecked you're not forced to handle it. However, if for some reason you need to deal with checked exceptions this
+API provides a further method, `checkedGet`, which may throw an `Exception` that must be handled.
+
+As a final note, the original library traps `Throwable` objects. This means that it also handles errors which are
+a subclass of `Error`. In general you should not catch `Error`s. As a matter of fact, the Java API describes `Error`
+starting with the following definition: "An Error is a subclass of `Throwable` that indicates serious problems that
+a reasonable application should not try to catch". For this reason I decided not to catch `Throwable`s but only
+`Exception`s.
 
 ## Javadoc ##
 <a href="http://lambdista.github.io/try/apidocs/">API documentation</a> for this project.
