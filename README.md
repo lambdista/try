@@ -1,8 +1,9 @@
 # Scala's Try-Success-Failure for Java 7 #
 
-This API is a port to Java 7 of the master branch (which uses Java 8 instead). This port has been done by
-[Sławomir Nowak](https://github.com/slnowak) using [Google Guava](https://github.com/google/guava) which provides
-functional abstractions such as `Function` and `Predicate`.
+This API is a Java 7 port of the master branch (which uses Java 8 instead). This port has been done by
+[Sławomir Nowak](https://github.com/slnowak) using [Google Guava library](https://github.com/google/guava) which provides
+functional abstractions such as `Function` and `Predicate`--apart many other goodies.
+
 Of course, since Java 7 didn't have lambdas yet the syntax here is much
 more verbose, but considering Sławomir found the API useful nonetheless I decided to include it here as
 an alternative branch.
@@ -27,5 +28,5 @@ Unless required by applicable law or agreed to in writing, software distributed 
 See the License for the specific language governing permissions and limitations under the License.
 
 ## Credits ##
-[Credits](https://github.com/lambdista/try/blob/master/CREDITS.md)
+[Credits](https://github.com/lambdista/try/blob/jdk7-support/CREDITS.md)
 
