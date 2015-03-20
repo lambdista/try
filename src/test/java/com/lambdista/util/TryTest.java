@@ -20,14 +20,12 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import org.junit.Test;
 
-import java.util.NoSuchElementException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Unit test for the {@code Try-Success-Failure} API. It covers each and every method of
- * {@link com.lambdista.util.Try} in case of both success and failure
+ * Unit test for the {@code Try-Success-Failure} API. It covers each and every method of {@link com.lambdista.util.Try}
+ * in case of both success and failure
  *
  * @author Alessandro Lacava
  * @since 2014-06-20
@@ -75,7 +73,7 @@ public class TryTest {
     }
 
     @Test(expected = GetOfFailureException.class)
-    public void testGetAgainstAFailure()  {
+    public void testGetAgainstAFailure() {
         Try<Integer> result = Try.apply(
                 new FailableSupplier<Integer>() {
                     @Override
@@ -149,7 +147,8 @@ public class TryTest {
                 new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) {
-                        System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed");
+                        System.out.println("Since it's a failure it does not even get here. As a matter of fact this " +
+                                "won't be printed");
                     }
                 }
         );
@@ -177,7 +176,8 @@ public class TryTest {
                 }
 
         );
-        assertEquals("mappedResult must be Success(\"42, Hello World!\")", mappedResult, new Try.Success<>("42, Hello World!"));
+        assertEquals("mappedResult must be Success(\"42, Hello World!\")", mappedResult, new Try.Success<>("42, Hello" +
+                " World!"));
 
     }
 
@@ -196,7 +196,8 @@ public class TryTest {
                     @Override
                     public String apply(Integer input) {
                         String out = input.toString() + ", Hello World!";
-                        System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed");
+                        System.out.println("Since it's a failure it does not even get here. As a matter of fact this " +
+                                "won't be printed");
                         return out;
                     }
                 }
@@ -233,7 +234,8 @@ public class TryTest {
                 }
         );
 
-        assertEquals("flatMappedResult must be Success(\"42, Hello World!\")", flatMappedResult, new Try.Success<>("42, Hello World!"));
+        assertEquals("flatMappedResult must be Success(\"42, Hello World!\")", flatMappedResult, new Try.Success<>
+                ("42, Hello World!"));
     }
 
     @Test(expected = GetOfFailureException.class)
@@ -256,7 +258,8 @@ public class TryTest {
                                     @Override
                                     public String get() throws Exception {
                                         String out = i + ", " + anotherSuccess();
-                                        System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed");
+                                        System.out.println("Since it's a failure it does not even get here. As a " +
+                                                "matter of fact this won't be printed");
                                         return out;
                                     }
                                 }
@@ -307,7 +310,8 @@ public class TryTest {
                 new Predicate<Integer>() {
                     @Override
                     public boolean apply(Integer i) {
-                        System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed");
+                        System.out.println("Since it's a failure it does not even get here. As a matter of fact this " +
+                                "won't be printed");
                         return i == 42;
                     }
                 }
@@ -492,7 +496,8 @@ public class TryTest {
                     }
                 }
         );
-        assertEquals("failed result.toOptional() must be Optional.empty()", result.toOptional(), Optional.<Integer>absent());
+        assertEquals("failed result.toOptional() must be Optional.empty()", result.toOptional(), Optional
+                .<Integer>absent());
     }
 
     @Test

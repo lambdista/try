@@ -1,13 +1,13 @@
 package com.lambdista.example;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Scanner;
+
 import com.google.common.base.Function;
 import com.lambdista.util.Consumer;
 import com.lambdista.util.FailableSupplier;
 import com.lambdista.util.Try;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Scanner;
 
 /**
  * @author Alessandro Lacava
@@ -25,7 +25,6 @@ public class Url {
 
         System.out.println("\nFile read using the Try-Success-Failure API");
         System.out.println(urlToStringWithTry(url, errorMessage));
-
 
     }
 

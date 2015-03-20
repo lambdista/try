@@ -15,16 +15,15 @@
  */
 package com.lambdista.example;
 
-import com.lambdista.util.FailableSupplier;
-import com.lambdista.util.Try;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import com.lambdista.util.FailableSupplier;
+import com.lambdista.util.Try;
+import org.apache.commons.io.FileUtils;
 
 /**
  * File lines read example
@@ -44,7 +43,7 @@ public class ReadFileLines {
         System.out.println("File read using the Try-Success-Failure API");
         printLines(lines);
 
-    } 
+    }
 
     public static List<String> readFileWithoutTry(String file) {
 
@@ -72,7 +71,7 @@ public class ReadFileLines {
     }
 
     private static void printLines(Collection<String> lines) {
-        for (String line: lines) {
+        for (String line : lines) {
             System.out.println(line);
         }
     }

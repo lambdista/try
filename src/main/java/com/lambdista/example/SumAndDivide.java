@@ -15,13 +15,13 @@
  */
 package com.lambdista.example;
 
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
 import com.google.common.base.Function;
 import com.lambdista.util.Consumer;
 import com.lambdista.util.FailableSupplier;
 import com.lambdista.util.Try;
-
-import java.util.InputMismatchException;
-import java.util.Scanner;
 
 /**
  * Sum and divide example
@@ -54,7 +54,8 @@ public class SumAndDivide {
             y = Integer.parseInt(second);
             z = Integer.parseInt(third);
             System.out.println("The sum is: " + (x + y + z));
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+        }
     }
 
     public static void sumWithTry(final String first, final String second, final String third) {
@@ -107,15 +108,6 @@ public class SumAndDivide {
                     }
                 }
         );
-
-        /* Note that this example is implemented this way just to show you the Try's chaining peculiarity.
-           Of course if the sum was what you just needed then you could have obtained it much more easily as follows:
-
-           Try<Integer> res = Try.apply(() ->
-                Integer.parseInt(first) + Integer.parseInt(second) + Integer.parseInt(third)
-           );
-
-         */
 
         res.forEach(
                 new Consumer<Integer>() {
