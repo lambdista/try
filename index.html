@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
     <!--[if lt IE 9]>
@@ -47,6 +47,18 @@ Indeed there are cases where you would use the traditional <code>try-catch</code
 a more <em>fluent interface</em> to deal with exceptions.</p>
 
 <h2>
+<a id="using-try-as-a-maven-dependency" class="anchor" href="#using-try-as-a-maven-dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Try as a Maven dependency</h2>
+
+<p>Binary release artifacts are published to the <a href="https://oss.sonatype.org">Sonatype OSS Repository Hosting service</a>. 
+Add the following dependency into your pom.xml to use <code>Try</code>:</p>
+
+<div class="highlight highlight-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
+  &lt;<span class="pl-ent">groupId</span>&gt;com.lambdista&lt;/<span class="pl-ent">groupId</span>&gt;
+  &lt;<span class="pl-ent">artifactId</span>&gt;try&lt;/<span class="pl-ent">artifactId</span>&gt;
+  &lt;<span class="pl-ent">version</span>&gt;0.1.0&lt;/<span class="pl-ent">version</span>&gt;
+&lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
+
+<h2>
 <a id="build" class="anchor" href="#build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build</h2>
 
 <p>This project is managed with <a href="http://maven.apache.org/">Maven</a> so it can be built using:</p>
@@ -84,13 +96,13 @@ and the new <code>Try</code> API.</p>
 <h4>
 <a id="using-the-traditional-try-catch-block" class="anchor" href="#using-the-traditional-try-catch-block" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the traditional try-catch block</h4>
 
-<div class="highlight highlight-java"><pre><span class="pl-s">public</span> <span class="pl-s">static</span> <span class="pl-st">List&lt;<span class="pl-stj">String</span>&gt;</span> readFile(<span class="pl-stj">String</span> file) {
+<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">List&lt;<span class="pl-smi">String</span>&gt;</span> readFile(<span class="pl-smi">String</span> file) {
 
-    <span class="pl-st">List&lt;<span class="pl-stj">String</span>&gt;</span> lines;
+    <span class="pl-k">List&lt;<span class="pl-smi">String</span>&gt;</span> lines;
     <span class="pl-k">try</span> {
-        lines <span class="pl-k">=</span> <span class="pl-stj">Files</span><span class="pl-k">.</span>readAllLines(<span class="pl-k">new</span> <span class="pl-stj">File</span>(file)<span class="pl-k">.</span>toPath());
-    } <span class="pl-k">catch</span> (<span class="pl-stj">IOException</span> e) {
-        lines <span class="pl-k">=</span> <span class="pl-stj">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-s1"><span class="pl-pds">"</span>Could not read the file: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> file);
+        lines <span class="pl-k">=</span> <span class="pl-smi">Files</span><span class="pl-k">.</span>readAllLines(<span class="pl-k">new</span> <span class="pl-smi">File</span>(file)<span class="pl-k">.</span>toPath());
+    } <span class="pl-k">catch</span> (<span class="pl-smi">IOException</span> e) {
+        lines <span class="pl-k">=</span> <span class="pl-smi">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-s"><span class="pl-pds">"</span>Could not read the file: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> file);
     }
 
     <span class="pl-k">return</span> lines;
@@ -102,10 +114,10 @@ returns a <code>List&lt;String&gt;</code> with just one line: <em>"Could not rea
 <h4>
 <a id="using-the-try-api" class="anchor" href="#using-the-try-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the Try API</h4>
 
-<div class="highlight highlight-java"><pre><span class="pl-s">public</span> <span class="pl-s">static</span> <span class="pl-st">List&lt;<span class="pl-stj">String</span>&gt;</span> readFile(<span class="pl-stj">String</span> file) {
+<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">List&lt;<span class="pl-smi">String</span>&gt;</span> readFile(<span class="pl-smi">String</span> file) {
 
-    <span class="pl-k">return</span> <span class="pl-stj">Try</span><span class="pl-k">.</span>apply(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-stj">Files</span><span class="pl-k">.</span>readAllLines(<span class="pl-k">new</span> <span class="pl-stj">File</span>(file)<span class="pl-k">.</span>toPath()))
-            .getOrElse(<span class="pl-stj">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-s1"><span class="pl-pds">"</span>Could not read the file: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> file));
+    <span class="pl-k">return</span> <span class="pl-smi">Try</span><span class="pl-k">.</span>apply(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-smi">Files</span><span class="pl-k">.</span>readAllLines(<span class="pl-k">new</span> <span class="pl-smi">File</span>(file)<span class="pl-k">.</span>toPath()))
+            .getOrElse(<span class="pl-smi">Arrays</span><span class="pl-k">.</span>asList(<span class="pl-s"><span class="pl-pds">"</span>Could not read the file: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> file));
 
 }</pre></div>
 
@@ -127,14 +139,14 @@ because otherwise I wouldn't have written this API! :-)</p>
 <h4>
 <a id="using-the-traditional-try-catch-finally-block" class="anchor" href="#using-the-traditional-try-catch-finally-block" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the traditional try-catch-finally block</h4>
 
-<div class="highlight highlight-java"><pre><span class="pl-s">public</span> <span class="pl-s">static</span> <span class="pl-stj">String</span> urlToString(<span class="pl-stj">String</span> url, <span class="pl-stj">String</span> errorMessage) {
-    <span class="pl-stj">Scanner</span> scanner <span class="pl-k">=</span> <span class="pl-c1">null</span>;
+<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-smi">String</span> urlToString(<span class="pl-smi">String</span> url, <span class="pl-smi">String</span> errorMessage) {
+    <span class="pl-smi">Scanner</span> scanner <span class="pl-k">=</span> <span class="pl-c1">null</span>;
     <span class="pl-k">try</span> {
-        scanner <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">Scanner</span>(<span class="pl-k">new</span> <span class="pl-stj">URL</span>(url)<span class="pl-k">.</span>openStream(), <span class="pl-s1"><span class="pl-pds">"</span>UTF-8<span class="pl-pds">"</span></span>);
-        <span class="pl-stj">String</span> result <span class="pl-k">=</span> scanner<span class="pl-k">.</span>useDelimiter(<span class="pl-s1"><span class="pl-pds">"</span><span class="pl-cce">\\</span>A<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>next();
+        scanner <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Scanner</span>(<span class="pl-k">new</span> <span class="pl-smi">URL</span>(url)<span class="pl-k">.</span>openStream(), <span class="pl-s"><span class="pl-pds">"</span>UTF-8<span class="pl-pds">"</span></span>);
+        <span class="pl-smi">String</span> result <span class="pl-k">=</span> scanner<span class="pl-k">.</span>useDelimiter(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\\</span>A<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>next();
         scanner<span class="pl-k">.</span>close();
         <span class="pl-k">return</span> result;
-    } <span class="pl-k">catch</span> (<span class="pl-stj">IOException</span> e) {
+    } <span class="pl-k">catch</span> (<span class="pl-smi">IOException</span> e) {
         <span class="pl-k">return</span> errorMessage;
     } <span class="pl-k">finally</span> {
         <span class="pl-k">if</span> (scanner <span class="pl-k">!=</span> <span class="pl-c1">null</span>) {
@@ -153,9 +165,9 @@ at the, semantically, same code in the following example.</p>
 <h4>
 <a id="using-the-try-api-1" class="anchor" href="#using-the-try-api-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the Try API</h4>
 
-<div class="highlight highlight-java"><pre><span class="pl-s">public</span> <span class="pl-s">static</span> <span class="pl-stj">String</span> urlToString(<span class="pl-stj">String</span> url, <span class="pl-stj">String</span> errorMessage) {
-    <span class="pl-st">Try&lt;<span class="pl-stj">Scanner</span>&gt;</span> scanner <span class="pl-k">=</span> <span class="pl-stj">Try</span><span class="pl-k">.</span>apply(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-k">new</span> <span class="pl-stj">Scanner</span>(<span class="pl-k">new</span> <span class="pl-stj">URL</span>(url)<span class="pl-k">.</span>openStream(), <span class="pl-s1"><span class="pl-pds">"</span>UTF-8<span class="pl-pds">"</span></span>));
-    <span class="pl-stj">String</span> result <span class="pl-k">=</span> scanner<span class="pl-k">.</span>map(s <span class="pl-k">-</span><span class="pl-k">&gt;</span> s<span class="pl-k">.</span>useDelimiter(<span class="pl-s1"><span class="pl-pds">"</span><span class="pl-cce">\\</span>A<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>next())<span class="pl-k">.</span>getOrElse(errorMessage);
+<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-smi">String</span> urlToString(<span class="pl-smi">String</span> url, <span class="pl-smi">String</span> errorMessage) {
+    <span class="pl-k">Try&lt;<span class="pl-smi">Scanner</span>&gt;</span> scanner <span class="pl-k">=</span> <span class="pl-smi">Try</span><span class="pl-k">.</span>apply(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-k">new</span> <span class="pl-smi">Scanner</span>(<span class="pl-k">new</span> <span class="pl-smi">URL</span>(url)<span class="pl-k">.</span>openStream(), <span class="pl-s"><span class="pl-pds">"</span>UTF-8<span class="pl-pds">"</span></span>));
+    <span class="pl-smi">String</span> result <span class="pl-k">=</span> scanner<span class="pl-k">.</span>map(s <span class="pl-k">-</span><span class="pl-k">&gt;</span> s<span class="pl-k">.</span>useDelimiter(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\\</span>A<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>next())<span class="pl-k">.</span>getOrElse(errorMessage);
     scanner<span class="pl-k">.</span>forEach(s <span class="pl-k">-</span><span class="pl-k">&gt;</span> s<span class="pl-k">.</span>close());
     <span class="pl-k">return</span> result;
 }</pre></div>
@@ -186,14 +198,14 @@ if you forget to handle them. However unchecked exceptions such as <code>NullPoi
 <code>RuntimeException</code> and so on are not notified by the compiler if you don't handle them. Consider the following code
 snippet:</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-stj">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s1"><span class="pl-pds">"</span>Enter the dividend press Return and then enter the divisor: <span class="pl-pds">"</span></span>);
-<span class="pl-stj">Scanner</span> dividend <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">Scanner</span>(<span class="pl-stj">System</span><span class="pl-k">.</span>in);
-<span class="pl-stj">Scanner</span> divisor <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">Scanner</span>(<span class="pl-stj">System</span><span class="pl-k">.</span>in);
+<div class="highlight highlight-java"><pre><span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>Enter the dividend press Return and then enter the divisor: <span class="pl-pds">"</span></span>);
+<span class="pl-smi">Scanner</span> dividend <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Scanner</span>(<span class="pl-smi">System</span><span class="pl-k">.</span>in);
+<span class="pl-smi">Scanner</span> divisor <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Scanner</span>(<span class="pl-smi">System</span><span class="pl-k">.</span>in);
 
-<span class="pl-st">int</span> num <span class="pl-k">=</span> dividend<span class="pl-k">.</span>nextInt();
-<span class="pl-st">int</span> denum <span class="pl-k">=</span> divisor<span class="pl-k">.</span>nextInt();
-<span class="pl-stj">String</span> res <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>The quotient is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> (num <span class="pl-k">/</span> denum);
-<span class="pl-stj">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(res);</pre></div>
+<span class="pl-k">int</span> num <span class="pl-k">=</span> dividend<span class="pl-k">.</span>nextInt();
+<span class="pl-k">int</span> denum <span class="pl-k">=</span> divisor<span class="pl-k">.</span>nextInt();
+<span class="pl-smi">String</span> res <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>The quotient is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> (num <span class="pl-k">/</span> denum);
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(res);</pre></div>
 
 <p>The previous code asks the user to enter two integers and then performs their division. The problem is that it could
 throw two types of unchecked exceptions and the compiler of course wouldn't tell you. You are required to know it 
@@ -208,36 +220,36 @@ implementations.</p>
 <h4>
 <a id="using-the-traditional-try-catch-block-1" class="anchor" href="#using-the-traditional-try-catch-block-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the traditional try-catch block</h4>
 
-<div class="highlight highlight-java"><pre><span class="pl-s">public</span> <span class="pl-s">static</span> <span class="pl-st">void</span> divideWithoutTry() {
+<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">void</span> divideWithoutTry() {
 
-    <span class="pl-stj">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s1"><span class="pl-pds">"</span>Enter the dividend press Return and then enter the divisor: <span class="pl-pds">"</span></span>);
-    <span class="pl-stj">Scanner</span> dividend <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">Scanner</span>(<span class="pl-stj">System</span><span class="pl-k">.</span>in);
-    <span class="pl-stj">Scanner</span> divisor <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">Scanner</span>(<span class="pl-stj">System</span><span class="pl-k">.</span>in);
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>Enter the dividend press Return and then enter the divisor: <span class="pl-pds">"</span></span>);
+    <span class="pl-smi">Scanner</span> dividend <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Scanner</span>(<span class="pl-smi">System</span><span class="pl-k">.</span>in);
+    <span class="pl-smi">Scanner</span> divisor <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Scanner</span>(<span class="pl-smi">System</span><span class="pl-k">.</span>in);
 
-    <span class="pl-stj">String</span> res;
+    <span class="pl-smi">String</span> res;
     <span class="pl-k">try</span> {
-        res <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>The quotient is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> (dividend<span class="pl-k">.</span>nextInt() <span class="pl-k">/</span> divisor<span class="pl-k">.</span>nextInt());
-    } <span class="pl-k">catch</span>(<span class="pl-stj">InputMismatchException</span><span class="pl-k">|</span><span class="pl-stj">ArithmeticException</span> e) {
-        res <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>The integers you entered are not valid or the divisor is zero.<span class="pl-pds">"</span></span>;
+        res <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>The quotient is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> (dividend<span class="pl-k">.</span>nextInt() <span class="pl-k">/</span> divisor<span class="pl-k">.</span>nextInt());
+    } <span class="pl-k">catch</span>(<span class="pl-smi">InputMismatchException</span><span class="pl-k">|</span><span class="pl-smi">ArithmeticException</span> e) {
+        res <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>The integers you entered are not valid or the divisor is zero.<span class="pl-pds">"</span></span>;
     }
 
-    <span class="pl-stj">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(res);
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(res);
 }</pre></div>
 
 <h4>
 <a id="using-the-try-api-2" class="anchor" href="#using-the-try-api-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the Try API</h4>
 
-<div class="highlight highlight-java"><pre><span class="pl-s">public</span> <span class="pl-s">static</span> <span class="pl-st">void</span> divideWithTry() {
+<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">void</span> divideWithTry() {
 
-    <span class="pl-stj">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s1"><span class="pl-pds">"</span>Enter the dividend press Return and then enter the divisor: <span class="pl-pds">"</span></span>);
-    <span class="pl-stj">Scanner</span> dividend <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">Scanner</span>(<span class="pl-stj">System</span><span class="pl-k">.</span>in);
-    <span class="pl-stj">Scanner</span> divisor <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-stj">Scanner</span>(<span class="pl-stj">System</span><span class="pl-k">.</span>in);
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>Enter the dividend press Return and then enter the divisor: <span class="pl-pds">"</span></span>);
+    <span class="pl-smi">Scanner</span> dividend <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Scanner</span>(<span class="pl-smi">System</span><span class="pl-k">.</span>in);
+    <span class="pl-smi">Scanner</span> divisor <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Scanner</span>(<span class="pl-smi">System</span><span class="pl-k">.</span>in);
 
-    <span class="pl-stj">String</span> res <span class="pl-k">=</span> <span class="pl-stj">Try</span><span class="pl-k">.</span>apply(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> dividend<span class="pl-k">.</span>nextInt() <span class="pl-k">/</span> divisor<span class="pl-k">.</span>nextInt())
-            .map(quotient <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-s1"><span class="pl-pds">"</span>The quotient is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> quotient)
-            .getOrElse(<span class="pl-s1"><span class="pl-pds">"</span>The integers you entered are not valid or the divisor is zero.<span class="pl-pds">"</span></span>);
+    <span class="pl-smi">String</span> res <span class="pl-k">=</span> <span class="pl-smi">Try</span><span class="pl-k">.</span>apply(() <span class="pl-k">-</span><span class="pl-k">&gt;</span> dividend<span class="pl-k">.</span>nextInt() <span class="pl-k">/</span> divisor<span class="pl-k">.</span>nextInt())
+            .map(quotient <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>The quotient is: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> quotient)
+            .getOrElse(<span class="pl-s"><span class="pl-pds">"</span>The integers you entered are not valid or the divisor is zero.<span class="pl-pds">"</span></span>);
 
-    <span class="pl-stj">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(res);
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(res);
 }</pre></div>
 
 <p>In the previous code <code>map</code> maps the <code>Integer</code> result into a <code>String</code>. After the <code>map</code> call you have something
