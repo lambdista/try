@@ -15,6 +15,18 @@ Note that I'm not saying here that the `try-catch` approach must be abandoned in
 Indeed there are cases where you would use the traditional `try-catch` pattern but, in general, I think this API provides
 a more *fluent interface* to deal with exceptions.
 
+## Using Try as a Maven dependency
+Binary release artifacts are published to the [Sonatype OSS Repository Hosting service](https://oss.sonatype.org). 
+Add the following dependency into your pom.xml to use `Try`:
+
+```xml
+<dependency>
+  <groupId>com.lambdista</groupId>
+  <artifactId>try</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
 ## Build ##
 This project is managed with [Maven](http://maven.apache.org/) so it can be built using:
 
