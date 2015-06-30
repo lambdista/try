@@ -31,15 +31,7 @@ public interface TryBinaryOperator<T> extends BinaryOperator<Try<T>> {
    */
   public static <T> TryBinaryOperator<T> of(BinaryOperator<T> binaryOperator) {
     Objects.requireNonNull(binaryOperator);
-    return (a, b) -> {
-      if (a.isFailure()) {
-        return a;
-      }
-      if (b.isFailure()) {
-        return b;
-      }
-      return new Try.Success<T>(binaryOperator.apply(a.get(), b.get()));
-    };
+    return (a, b) -> a.flatMap(x -> b.map(y -> binaryOperator.apply(x, y)));
   }
 
   /**
