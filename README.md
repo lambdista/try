@@ -23,9 +23,12 @@ Add the following dependency into your pom.xml to use `Try`:
 <dependency>
   <groupId>com.lambdista</groupId>
   <artifactId>try</artifactId>
-  <version>0.1.0</version>
+  <version>$VERSION</version>
 </dependency>
 ```
+
+where `$VERSION` is the version you want to use (0.1.0, 0.2.0, and so on). You can grab the version you're interested
+in from the [available releases](https://github.com/lambdista/try/releases)
 
 ## Build ##
 This project is managed with [Maven](http://maven.apache.org/) so it can be built using:
