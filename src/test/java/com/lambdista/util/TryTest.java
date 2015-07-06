@@ -102,7 +102,7 @@ public class TryTest {
                 i -> System.out.println("Since it's a failure it does not even get here. As a matter of fact this won't be printed")
         );
 
-        // Conversely, calling get mush throw the GetOfFailureException captured in result
+        // Conversely, calling get must throw the GetOfFailureException captured in result
         result.get();
     }
 
@@ -131,7 +131,7 @@ public class TryTest {
                 }
         );
 
-        // Conversely, calling get mush throw the GetOfFailureException captured in result
+        // Conversely, calling get must throw the GetOfFailureException captured in result
         result.get();
     }
 
@@ -166,7 +166,7 @@ public class TryTest {
                 )
         );
 
-        // Conversely, calling get mush throw the GetOfFailureException captured in result
+        // Conversely, calling get must throw the GetOfFailureException captured in result
         chainedResult.get();
     }
 
@@ -193,7 +193,7 @@ public class TryTest {
                 }
         );
 
-        // Conversely, calling get mush throw the GetOfFailureException captured in result
+        // Conversely, calling get must throw the GetOfFailureException captured in result
         filteredResult.get();
     }
 
@@ -207,7 +207,7 @@ public class TryTest {
                 i -> i != 42
         );
 
-        // In this case calling get mush throw a GetOfFailureException since the Predicate in filter does not hold
+        // In this case calling get must throw a GetOfFailureException since the Predicate in filter does not hold
         filteredResult.get();
     }
 
