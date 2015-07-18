@@ -197,6 +197,28 @@ public abstract class Try<T> {
     public abstract <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
                                          Function<Exception, ? extends Try<U>> failureFunc);
 
+	/**
+	 * Converts a {@link Function} expecting an {@link AutoClosable} into a
+	 * {@code Function} which closes the {@code AutoCloseable} after execution.
+	 * 
+	 * <p>
+	 * This is equivalent to the <a href=
+	 * "https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html"
+	 * > try-with-resources</a> statement.
+	 * 
+	 * @param consumer {@code Function} expecting an {@code AutoCloseable}
+	 * @return a {@code Function} closing its {@code AutoCloseable} parameter and 
+	 * wrapping the outcome as a {@code Try}
+	 * @see #apply(FailableSupplier)
+	 */
+    public static <T extends AutoCloseable,R> Function<T, Try<R>> apply(Function<T, R> consumer) {
+		return closeable -> Try.apply(() -> {
+				try (T in = closeable) {
+					return consumer.apply(in);
+				}
+			});
+	}
+    
     /**
      * Constructs a {@code Try} using the {@link FailableSupplier} parameter. This
      * method will ensure any non-fatal exception is caught and a {@link Failure} object is returned.

@@ -15,14 +15,22 @@
  */
 package com.lambdista.util;
 
-import com.lambdista.util.Try;
-import org.junit.Test;
-
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
+import java.util.function.Function;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for the {@code Try-Success-Failure} API. It covers each and every method of
@@ -32,7 +40,16 @@ import static org.junit.Assert.assertTrue;
  * @since 2014-06-20
  */
 public class TryTest {
+	
+	private Closeable closeableMock;
+	private InputStream inputStreamMock;
 
+	@Before
+	public void setup(){
+		this.closeableMock = mock(Closeable.class);
+		this.inputStreamMock = mock(InputStream.class);
+	}
+	
     @Test
     public void testIsSuccess() {
         Try<Integer> result = Try.apply(
@@ -371,6 +388,37 @@ public class TryTest {
                 exception -> new Try.Success<>(0)
         );
         assertEquals("out must be Success(0)", out, new Try.Success<>(0));
+    }
+    
+    @Test
+    public void testCloseableShouldBeClosedAfterConsumption() throws IOException{
+    	verify(closeableMock, never()).close();
+    	final int result = Try.apply(closeable -> success()).apply(closeableMock).get();
+    	verify(closeableMock).close();
+    	assertThat(result, is(equalTo(42)));
+    }
+    
+    @Test
+    public void testInputStreamShouldBeClosedAfterConsumption() throws IOException{
+    	verify(inputStreamMock, never()).close();
+    	final String result = Try.apply(inputStream -> anotherSuccess()).apply(inputStreamMock).get();
+    	verify(inputStreamMock).close();
+    	assertThat(result, is(equalTo("Hello World!")));
+    }
+    
+    @Test
+    public void testSuppliedFunctionIsNullShouldBeAFailure() throws IOException{
+    	verify(inputStreamMock, never()).close();
+    	final Try<String> result = Try.apply((Function<InputStream, String>) null).apply(inputStreamMock);
+    	verify(inputStreamMock).close();
+    	assertThat(result.isFailure(), is(equalTo(true)));
+    }
+    
+    @Test
+    public void testInputStreamShouldBeClosedAfterException() throws IOException{
+    	verify(inputStreamMock, never()).close();
+    	Try.apply(inputStream -> failure()).apply(inputStreamMock);
+    	verify(inputStreamMock).close();
     }
 
     private int success() {
