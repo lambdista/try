@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Alessandro Lacava
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -86,9 +86,9 @@ public abstract class Try<T> {
     /**
      * @return the value wrapped within {@code Success} if it's a {@code Success} or throws the exception if {@code
      * this} is a {@code Failure}
-     * @throws Exception if {@code this} is a {@code Failure}
+     * @throws Throwable if {@code this} is a {@code Failure}
      */
-    public abstract T checkedGet() throws Exception;
+    public abstract T checkedGet() throws Throwable;
 
     /**
      * Feeds the value to {@link Consumer}'s {@code accept} method if {@code this} is
@@ -141,9 +141,9 @@ public abstract class Try<T> {
      * @param recoverFunc the function to apply if {@code this} is a {@link Failure}
      * @param <U>         the type of the result
      * @return a {@code Try<U>} obtained by wrapping the result of applying {@code recoverFunc} to
-     * the {@link java.lang.Exception}
+     * the {@link java.lang.Throwable}
      */
-    public abstract <U> Try<U> recover(Function<? super Exception, ? extends U> recoverFunc);
+    public abstract <U> Try<U> recover(Function<? super Throwable, ? extends U> recoverFunc);
 
     /**
      * Applies the given function {@code recoverFunc} if {@code this} is a {@link Failure},
@@ -151,17 +151,17 @@ public abstract class Try<T> {
      *
      * @param recoverFunc the function to apply if {@code this} is a {@link Failure}
      * @param <U>         the type of the result
-     * @return a {@code Try<U>} obtained by applying {@code recoverFunc} to the {@link java.lang.Exception}
+     * @return a {@code Try<U>} obtained by applying {@code recoverFunc} to the {@link java.lang.Throwable}
      */
-    public abstract <U> Try<U> recoverWith(Function<? super Exception, ? extends Try<U>> recoverFunc);
+    public abstract <U> Try<U> recoverWith(Function<? super Throwable, ? extends Try<U>> recoverFunc);
 
     /**
      * Completes {@code this} {@code Try} with an exception wrapped in a {@link Success}.
      *
-     * @return a {@code Try<Exception>}, where {@code Exception} is either the exception that the {@code Try} failed
+     * @return a {@code Try<Throwable>}, where {@code Exception} is either the exception that the {@code Try} failed
      * with (if {@code this} is a {@link Failure}) or an {@link java.lang.UnsupportedOperationException}
      */
-    public abstract Try<Exception> failed();
+    public abstract Try<Throwable> failed();
 
     /**
      * Converts this {@code Try<T>} into a {@code java.util.Optional<T>}
@@ -195,33 +195,35 @@ public abstract class Try<T> {
      * @return a {@code Try<U>} obtained by applying either {@code successFunc} or {@code failureFunc}
      */
     public abstract <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
-                                         Function<Exception, ? extends Try<U>> failureFunc);
+                                         Function<Throwable, ? extends Try<U>> failureFunc);
 
-	/**
-	 * Converts a {@link Function} expecting an {@link AutoClosable} into a
-	 * {@code Function} which closes the {@code AutoCloseable} after execution.
-	 * 
-	 * <p>
-	 * This is equivalent to the <a href=
-	 * "https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html"
-	 * > try-with-resources</a> statement.
-	 * 
-	 * @param consumer {@code Function} expecting an {@code AutoCloseable}
-	 * @return a {@code Function} closing its {@code AutoCloseable} parameter and 
-	 * wrapping the outcome as a {@code Try}
-	 * @see #apply(FailableSupplier)
-	 */
-    public static <T extends AutoCloseable,R> Function<T, Try<R>> apply(Function<T, R> consumer) {
-		return closeable -> Try.apply(() -> {
-				try (T in = closeable) {
-					return consumer.apply(in);
-				}
-			});
-	}
-    
+    /**
+     * Converts a {@link Function} expecting an {@link java.lang.AutoCloseable} into a
+     * {@code Function} which closes the {@code AutoCloseable} after execution.
+     *
+     * <p>
+     * This is equivalent to the <a href=
+     * "https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html"
+     * > try-with-resources</a> statement.
+     *
+     * @param consumer {@code Function} expecting an {@code AutoCloseable}
+     * @return a {@code Function} closing its {@code AutoCloseable} parameter and
+     * wrapping the outcome as a {@code Try}
+     * @see #apply(FailableSupplier)
+     */
+    public static <T extends AutoCloseable, R> Function<T, Try<R>> apply(Function<T, R> consumer) {
+        return closeable -> Try.apply(() -> {
+            try (T in = closeable) {
+                return consumer.apply(in);
+            }
+        });
+    }
+
     /**
      * Constructs a {@code Try} using the {@link FailableSupplier} parameter. This
-     * method will ensure any non-fatal exception is caught and a {@link Failure} object is returned.
+     * method will ensure any {@link java.lang.Throwable} is caught.
+     * However note that only {@link java.lang.Exception}s will be wrapped within a {@link Failure}
+     * object and returned. On the other hand any {@link java.lang.Error} will be rethrown.
      *
      * @param supplier the {@link FailableSupplier} to use
      * @param <T>      the type returned by the {@link FailableSupplier}
@@ -230,11 +232,23 @@ public abstract class Try<T> {
     public static <T> Try<T> apply(FailableSupplier<T> supplier) {
         try {
             return new Success<>(supplier.get());
-        } catch (Exception e) {
-            return new Failure<>(e);
+        } catch (Throwable e) {
+            if (e instanceof Exception) return new Failure<>((Exception) e);
+            else throw ((Error) e);
         }
     }
 
+    /**
+     * Converts a {@code Try<Try<T>>} to a {@code Try<T>}.
+     *
+     * @param t the {@code Try<Try<T>>} to be flattened.
+     * @param <T> the type wrapped by {@code Try}
+     * @return a {@code Try<T>}
+     */
+    public static <T> Try<T> join(Try<Try<T>> t) {
+        if (t instanceof Failure<?>) return ((Try<T>) t);
+        else return t.get();
+    }
 
     /**
      * Represents the successful result of a computation
@@ -282,40 +296,54 @@ public abstract class Try<T> {
 
         @Override
         public <U> Try<U> flatMap(Function<? super T, ? extends Try<U>> mapper) {
-            try {
-                return mapper.apply(value);
-            } catch (Exception e) {
-                return new Failure<>(e);
-            }
+            return Try.join(Try.apply(() -> mapper.apply(value)));
+//            try {
+//                return mapper.apply(value);
+//            } catch (Exception e) {
+//                return new Failure<>(e);
+//            } catch (Error e) {
+//                throw e;
+//            }
         }
 
         @Override
         public Try<T> filter(Predicate<? super T> predicate) {
-            try {
-                if (predicate.test(value)) {
-                    return this;
-                } else {
-                    return new Failure<>(new NoSuchElementException("Predicate does not hold for " + value));
-                }
-            } catch (Exception e) {
-                return new Failure<>(e);
-            }
+            return Try.join(Try.apply(() ->
+                    {
+                        if (predicate.test(value)) {
+                            return this;
+                        } else {
+                            return new Failure<>(new NoSuchElementException("Predicate does not hold for " + value));
+                        }
+                    }
+            ));
+//            try {
+//                if (predicate.test(value)) {
+//                    return this;
+//                } else {
+//                    return new Failure<>(new NoSuchElementException("Predicate does not hold for " + value));
+//                }
+//            } catch (Exception e) {
+//                return new Failure<>(e);
+//            } catch (Error e) {
+//                throw e;
+//            }
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public <U> Try<U> recover(Function<? super Exception, ? extends U> recoverFunc) {
+        public <U> Try<U> recover(Function<? super Throwable, ? extends U> recoverFunc) {
             return (Try<U>) this;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public <U> Try<U> recoverWith(Function<? super Exception, ? extends Try<U>> recoverFunc) {
+        public <U> Try<U> recoverWith(Function<? super Throwable, ? extends Try<U>> recoverFunc) {
             return (Try<U>) this;
         }
 
         @Override
-        public Try<Exception> failed() {
+        public Try<Throwable> failed() {
             return new Failure<>(new UnsupportedOperationException("Success.failed"));
         }
 
@@ -336,7 +364,7 @@ public abstract class Try<T> {
 
         @Override
         public <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
-                                    Function<Exception, ? extends Try<U>> failureFunc) {
+                                    Function<Throwable, ? extends Try<U>> failureFunc) {
             return successFunc.apply(value);
         }
 
@@ -372,10 +400,10 @@ public abstract class Try<T> {
      */
     public static final class Failure<T> extends Try<T> {
 
-        private final Exception exception;
+        private final Throwable exception;
         private final GetOfFailureException unckeckedException;
 
-        public Failure(Exception exception) {
+        public Failure(Throwable exception) {
             this.exception = exception;
             this.unckeckedException = new GetOfFailureException(exception);
         }
@@ -396,7 +424,7 @@ public abstract class Try<T> {
         }
 
         @Override
-        public T checkedGet() throws Exception {
+        public T checkedGet() throws Throwable {
             throw exception;
         }
 
@@ -422,25 +450,23 @@ public abstract class Try<T> {
         }
 
         @Override
-        public <U> Try<U> recover(Function<? super Exception, ? extends U> recoverFunc) {
-            try {
-                return Try.apply(() -> recoverFunc.apply(exception));
-            } catch (Exception e) {
-                return new Failure<>(e);
-            }
+        public <U> Try<U> recover(Function<? super Throwable, ? extends U> recoverFunc) {
+            return Try.apply(() -> recoverFunc.apply(exception));
         }
 
         @Override
-        public <U> Try<U> recoverWith(Function<? super Exception, ? extends Try<U>> recoverFunc) {
+        public <U> Try<U> recoverWith(Function<? super Throwable, ? extends Try<U>> recoverFunc) {
             try {
                 return recoverFunc.apply(exception);
             } catch (Exception e) {
                 return new Failure<>(e);
+            } catch (Error e) {
+                throw e;
             }
         }
 
         @Override
-        public Try<Exception> failed() {
+        public Try<Throwable> failed() {
             return new Success<>(exception);
         }
 
@@ -461,7 +487,7 @@ public abstract class Try<T> {
 
         @Override
         public <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
-                                    Function<Exception, ? extends Try<U>> failureFunc) {
+                                    Function<Throwable, ? extends Try<U>> failureFunc) {
             return failureFunc.apply(exception);
         }
 

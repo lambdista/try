@@ -17,7 +17,7 @@ package com.lambdista.util;
 
 /**
  * This class is semantically the same as the {@link java.util.function.Supplier} class apart from the fact that
- * its {@link FailableSupplier#get()} method may throw an {@link java.lang.Exception}
+ * its {@link FailableSupplier#get()} method may throw an {@link java.lang.Throwable}
  *
  * @author Alessandro Lacava
  * @since 2014-06-20
@@ -28,7 +28,7 @@ public interface FailableSupplier<T> {
     /**
      *
      * @return a value of type {@code T}
-     * @throws Exception if it fails
+     * @throws Throwable if it fails
      */
-    public T get() throws Exception;
+    public T get() throws Throwable;
 }
