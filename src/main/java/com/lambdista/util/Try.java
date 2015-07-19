@@ -29,7 +29,7 @@ import java.util.function.Predicate;
  * <p>To use {@code Try} you need to call the {@link Try#apply(FailableSupplier)} method passing in a lambda with
  * the same signature used for a common {@link java.util.function.Supplier}.
  * Indeed {@link FailableSupplier} is just a {@link java.util.function.Supplier} with a
- * {@code 'throws Exception'} added to its {@code 'get'} method.</p>
+ * {@code 'throws Throwable'} added to its {@code 'get'} method.</p>
  *
  * <p>For example, {@code Try} can be used to perform division on a user-defined input, without the need to do explicit
  * exception-handling in all of the places that an exception might occur.</p>
@@ -158,7 +158,7 @@ public abstract class Try<T> {
     /**
      * Completes {@code this} {@code Try} with an exception wrapped in a {@link Success}.
      *
-     * @return a {@code Try<Throwable>}, where {@code Exception} is either the exception that the {@code Try} failed
+     * @return a {@code Try<Throwable>}, where {@code Throwable} is either the exception that the {@code Try} failed
      * with (if {@code this} is a {@link Failure}) or an {@link java.lang.UnsupportedOperationException}
      */
     public abstract Try<Throwable> failed();
@@ -297,13 +297,6 @@ public abstract class Try<T> {
         @Override
         public <U> Try<U> flatMap(Function<? super T, ? extends Try<U>> mapper) {
             return Try.join(Try.apply(() -> mapper.apply(value)));
-//            try {
-//                return mapper.apply(value);
-//            } catch (Exception e) {
-//                return new Failure<>(e);
-//            } catch (Error e) {
-//                throw e;
-//            }
         }
 
         @Override
@@ -317,17 +310,6 @@ public abstract class Try<T> {
                         }
                     }
             ));
-//            try {
-//                if (predicate.test(value)) {
-//                    return this;
-//                } else {
-//                    return new Failure<>(new NoSuchElementException("Predicate does not hold for " + value));
-//                }
-//            } catch (Exception e) {
-//                return new Failure<>(e);
-//            } catch (Error e) {
-//                throw e;
-//            }
         }
 
         @SuppressWarnings("unchecked")
@@ -456,13 +438,7 @@ public abstract class Try<T> {
 
         @Override
         public <U> Try<U> recoverWith(Function<? super Throwable, ? extends Try<U>> recoverFunc) {
-            try {
-                return recoverFunc.apply(exception);
-            } catch (Exception e) {
-                return new Failure<>(e);
-            } catch (Error e) {
-                throw e;
-            }
+            return Try.join(Try.apply(() -> recoverFunc.apply(exception)));
         }
 
         @Override

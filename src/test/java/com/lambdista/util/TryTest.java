@@ -84,7 +84,7 @@ public class TryTest {
     }
 
     @Test
-    public void testUncheckedGetAgainstASuccess() throws Exception {
+    public void testUncheckedGetAgainstASuccess() throws Throwable {
         Try<Integer> result = Try.apply(
                 this::success
         );
@@ -93,7 +93,7 @@ public class TryTest {
     }
 
     @Test(expected = NumberFormatException.class)
-    public void testCheckedGetAgainstAFailure() throws Exception {
+    public void testCheckedGetAgainstAFailure() throws Throwable {
         Try<Integer> result = Try.apply(
                 this::failure
         );
@@ -111,7 +111,7 @@ public class TryTest {
     }
 
     @Test(expected = GetOfFailureException.class)
-    public void testForEachAgainstAFailure() throws Exception {
+    public void testForEachAgainstAFailure() throws Throwable {
         Try<Integer> result = Try.apply(
                 this::failure
         );
@@ -301,7 +301,7 @@ public class TryTest {
         Try<Integer> result = Try.apply(
                 this::success
         );
-        Try<Exception> failedOnASuccessProducesFailure = result.failed();
+        Try<Throwable> failedOnASuccessProducesFailure = result.failed();
         assertEquals("failedOnASuccessProducesFailure is a Failure", failedOnASuccessProducesFailure.isFailure(), true);
     }
 
@@ -310,7 +310,7 @@ public class TryTest {
         Try<Integer> result = Try.apply(
                 this::failure
         );
-        Try<Exception> failedOnAFailureProducesSuccess = result.failed();
+        Try<Throwable> failedOnAFailureProducesSuccess = result.failed();
         assertEquals("failedOnAFailureProducesSuccess is a Success", failedOnAFailureProducesSuccess.isSuccess(), true);
     }
 
