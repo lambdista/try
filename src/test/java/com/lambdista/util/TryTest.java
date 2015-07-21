@@ -164,7 +164,8 @@ public class TryTest {
                 )
         );
 
-        assertEquals("flatMappedResult must be Success(\"42, Hello World!\")", flatMappedResult, new Try.Success<>("42, Hello World!"));
+        assertEquals("flatMappedResult must be Success(\"42, Hello World!\")", flatMappedResult, new Try.Success<>
+                ("42, Hello World!"));
     }
 
     @Test(expected = GetOfFailureException.class)
@@ -389,13 +390,20 @@ public class TryTest {
         );
         assertEquals("out must be Success(0)", out, new Try.Success<>(0));
     }
+
+    @Test(expected = OutOfMemoryError.class)
+    public void testErrorMustNotBeCaught() throws Throwable {
+        Try.apply(
+                () -> {throw new OutOfMemoryError();}
+        );
+    }
     
     @Test
     public void testCloseableShouldBeClosedAfterConsumption() throws IOException{
     	verify(closeableMock, never()).close();
     	final int result = Try.apply(closeable -> success()).apply(closeableMock).get();
     	verify(closeableMock).close();
-    	assertThat(result, is(equalTo(42)));
+        assertThat(result, is(equalTo(42)));
     }
     
     @Test
@@ -403,7 +411,7 @@ public class TryTest {
     	verify(inputStreamMock, never()).close();
     	final String result = Try.apply(inputStream -> anotherSuccess()).apply(inputStreamMock).get();
     	verify(inputStreamMock).close();
-    	assertThat(result, is(equalTo("Hello World!")));
+        assertThat(result, is(equalTo("Hello World!")));
     }
     
     @Test
@@ -411,7 +419,7 @@ public class TryTest {
     	verify(inputStreamMock, never()).close();
     	final Try<String> result = Try.apply((Function<InputStream, String>) null).apply(inputStreamMock);
     	verify(inputStreamMock).close();
-    	assertThat(result.isFailure(), is(equalTo(true)));
+        assertThat(result.isFailure(), is(equalTo(true)));
     }
     
     @Test
