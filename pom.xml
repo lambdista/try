@@ -6,7 +6,7 @@
 
     <groupId>com.lambdista</groupId>
     <artifactId>try</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <packaging>jar</packaging>
 
     <name>Try-Success-Failure for Java 8</name>

@@ -248,11 +248,13 @@ objects will throw a `GetOfFailureException` which wraps the original `Exception
 unchecked you're not forced to handle it. However, if for some reason you need to deal with checked exceptions this
 API provides a further method, `checkedGet`, which may throw an `Exception` that must be handled.
 
-As a final note, the original library traps `Throwable` objects. This means that it also handles errors which are
-a subclass of `Error`. In general you should not catch `Error`s. As a matter of fact, the Java API describes `Error`
-starting with the following definition: "An Error is a subclass of `Throwable` that indicates serious problems that
-a reasonable application should not try to catch". For this reason I decided not to catch `Throwable`s but only
-`Exception`s.
+As a final note, the original library traps `Throwable` types and rethrows only `NonFatal` ones
+which, in its opinion, are: `VirtualMachineError`, `ThreadDeath`, `InterruptedException`, `LinkageError` and 
+`ControlThrowable`. The latter belongs to Scala so Java has no counterpart. Previous versions 
+of this library didn't catch `Throwable` types but only `Exception` ones. From the 0.3.0 version on, 
+thanks to [Gregor Trefs](https://github.com/gtrefs) suggestion, I changed the implementation so that now it 
+catches all `Throwable` types. However it rethrows all `Error` types. From the Java API: "An `Error` is a subclass 
+of `Throwable` that indicates serious problems that a reasonable application should not try to catch".
 
 ## Javadoc ##
 <a href="http://lambdista.github.io/try/apidocs/">API documentation</a> for this project.
