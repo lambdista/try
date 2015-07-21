@@ -16,6 +16,7 @@
 package com.lambdista.util;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -58,7 +59,6 @@ import java.util.function.Predicate;
  * @since 2014-06-20
  */
 public abstract class Try<T> {
-
     /**
      * Ensures that the only possible instances of this class
      * are either {@link Success} or {@link Failure}
@@ -212,6 +212,8 @@ public abstract class Try<T> {
      * @see #apply(FailableSupplier)
      */
     public static <T extends AutoCloseable, R> Function<T, Try<R>> apply(Function<T, R> consumer) {
+        Objects.requireNonNull(consumer);
+
         return closeable -> Try.apply(() -> {
             try (T in = closeable) {
                 return consumer.apply(in);
@@ -230,6 +232,8 @@ public abstract class Try<T> {
      * @return a {@code Try} object (an instance of either {@link Success} or {@link Failure}
      */
     public static <T> Try<T> apply(FailableSupplier<T> supplier) {
+        Objects.requireNonNull(supplier);
+
         try {
             return new Success<>(supplier.get());
         } catch (Throwable e) {
@@ -246,6 +250,8 @@ public abstract class Try<T> {
      * @return a {@code Try<T>}
      */
     public static <T> Try<T> join(Try<Try<T>> t) {
+        Objects.requireNonNull(t);
+
         if (t instanceof Failure<?>) return ((Try<T>) t);
         else return t.get();
     }
@@ -257,7 +263,6 @@ public abstract class Try<T> {
      * @since 2014-06-20
      */
     public static final class Success<T> extends Try<T> {
-
         private final T value;
 
         public Success(T value) {
@@ -286,21 +291,29 @@ public abstract class Try<T> {
 
         @Override
         public void forEach(Consumer<? super T> action) {
+            Objects.requireNonNull(action);
+
             action.accept(value);
         }
 
         @Override
         public <U> Try<U> map(Function<? super T, ? extends U> mapper) {
+            Objects.requireNonNull(mapper);
+
             return Try.apply(() -> mapper.apply(value));
         }
 
         @Override
         public <U> Try<U> flatMap(Function<? super T, ? extends Try<U>> mapper) {
+            Objects.requireNonNull(mapper);
+
             return Try.join(Try.apply(() -> mapper.apply(value)));
         }
 
         @Override
         public Try<T> filter(Predicate<? super T> predicate) {
+            Objects.requireNonNull(predicate);
+
             return Try.join(Try.apply(() ->
                     {
                         if (predicate.test(value)) {
@@ -331,7 +344,7 @@ public abstract class Try<T> {
 
         @Override
         public Optional<T> toOptional() {
-            return Optional.of(value);
+            return Optional.ofNullable(value);
         }
 
         @Override
@@ -347,6 +360,8 @@ public abstract class Try<T> {
         @Override
         public <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
                                     Function<Throwable, ? extends Try<U>> failureFunc) {
+            Objects.requireNonNull(successFunc);
+
             return successFunc.apply(value);
         }
 
@@ -381,7 +396,6 @@ public abstract class Try<T> {
      * @since 2014-06-20
      */
     public static final class Failure<T> extends Try<T> {
-
         private final Throwable exception;
         private final GetOfFailureException unckeckedException;
 
@@ -433,11 +447,15 @@ public abstract class Try<T> {
 
         @Override
         public <U> Try<U> recover(Function<? super Throwable, ? extends U> recoverFunc) {
+            Objects.requireNonNull(recoverFunc);
+
             return Try.apply(() -> recoverFunc.apply(exception));
         }
 
         @Override
         public <U> Try<U> recoverWith(Function<? super Throwable, ? extends Try<U>> recoverFunc) {
+            Objects.requireNonNull(recoverFunc);
+
             return Try.join(Try.apply(() -> recoverFunc.apply(exception)));
         }
 
@@ -464,6 +482,8 @@ public abstract class Try<T> {
         @Override
         public <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
                                     Function<Throwable, ? extends Try<U>> failureFunc) {
+            Objects.requireNonNull(failureFunc);
+
             return failureFunc.apply(exception);
         }
 

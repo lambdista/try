@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -397,6 +398,13 @@ public class TryTest {
                 () -> {throw new OutOfMemoryError();}
         );
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testSuppliedFailableSupplierIsNullShouldThrow() {
+        FailableSupplier<Integer> s = null;
+
+        Try.apply(s);
+    }
     
     @Test
     public void testCloseableShouldBeClosedAfterConsumption() throws IOException{
@@ -414,12 +422,11 @@ public class TryTest {
         assertThat(result, is(equalTo("Hello World!")));
     }
     
-    @Test
-    public void testSuppliedFunctionIsNullShouldBeAFailure() throws IOException{
+    @Test(expected = NullPointerException.class)
+    public void testSuppliedFunctionIsNullShouldThrow() throws IOException{
     	verify(inputStreamMock, never()).close();
-    	final Try<String> result = Try.apply((Function<InputStream, String>) null).apply(inputStreamMock);
+    	Try.apply((Function<InputStream, String>) null).apply(inputStreamMock);
     	verify(inputStreamMock).close();
-        assertThat(result.isFailure(), is(equalTo(true)));
     }
     
     @Test
