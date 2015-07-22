@@ -399,11 +399,12 @@ public class TryTest {
         );
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testSuppliedFailableSupplierIsNullShouldThrow() {
+    @Test
+    public void testSuppliedFailableSupplierIsNullShouldBeAFailure() {
         FailableSupplier<Integer> s = null;
 
-        Try.apply(s);
+        Try<Integer> out = Try.apply(s);
+        assertEquals("out must be a Failure", out.isFailure(), true);
     }
     
     @Test
@@ -422,11 +423,12 @@ public class TryTest {
         assertThat(result, is(equalTo("Hello World!")));
     }
     
-    @Test(expected = NullPointerException.class)
-    public void testSuppliedFunctionIsNullShouldThrow() throws IOException{
+    @Test
+    public void testSuppliedFunctionIsNullShouldBeAFailure() throws IOException{
     	verify(inputStreamMock, never()).close();
-    	Try.apply((Function<InputStream, String>) null).apply(inputStreamMock);
-    	verify(inputStreamMock).close();
+    	Try<String> out = Try.apply((Function<InputStream, String>) null).apply(inputStreamMock);
+        assertEquals("out must be a Failure", out.isFailure(), true);
+        verify(inputStreamMock).close();
     }
     
     @Test

@@ -16,7 +16,6 @@
 package com.lambdista.util;
 
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -26,15 +25,15 @@ import java.util.function.Predicate;
  * <p>The {@code Try} type represents a computation that may fail. If the computation is successful returns
  * the value wrapped in a {@link Success} otherwise returns the
  * {@link java.lang.Exception} wrapped in a {@link Failure}.</p>
- *
+ * <p>
  * <p>To use {@code Try} you need to call the {@link Try#apply(FailableSupplier)} method passing in a lambda with
  * the same signature used for a common {@link java.util.function.Supplier}.
  * Indeed {@link FailableSupplier} is just a {@link java.util.function.Supplier} with a
  * {@code 'throws Throwable'} added to its {@code 'get'} method.</p>
- *
+ * <p>
  * <p>For example, {@code Try} can be used to perform division on a user-defined input, without the need to do explicit
  * exception-handling in all of the places that an exception might occur.</p>
- *
+ * <p>
  * <p>An important property of {@code Try} shown in the {@link com.lambdista.example.SumAndDivide#divideWithTry()} method is its ability
  * to <i>pipeline (chain if you prefer)</i>  operations,
  * catching exceptions along the way thanks to its {@link Try#flatMap(java.util.function.Function)} method. If you
@@ -46,11 +45,11 @@ import java.util.function.Predicate;
  * {@code flatMap} calls and a last call to {@code map}. E.g.: Suppose you have 3 variables (x, y and z) being
  * of type {@code Try<Integer>} and you just wanto to sum them up. The code you need for doing that is the
  * following:</p>
- *
+ * <p>
  * <pre>
  * x.flatMap(a -> y.flatMap(b -> z.map(c -> a + b + c)))
  * </pre>
- *
+ * <p>
  * Apart from {@code map} and {@code flatMap}, {@code Try} has many other useful methods. See the {@code TryTest}
  * class for a thorough coverage of all {@code Try}'s methods.
  *
@@ -200,7 +199,7 @@ public abstract class Try<T> {
     /**
      * Converts a {@link Function} expecting an {@link java.lang.AutoCloseable} into a
      * {@code Function} which closes the {@code AutoCloseable} after execution.
-     *
+     * <p>
      * <p>
      * This is equivalent to the <a href=
      * "https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html"
@@ -212,8 +211,6 @@ public abstract class Try<T> {
      * @see #apply(FailableSupplier)
      */
     public static <T extends AutoCloseable, R> Function<T, Try<R>> apply(Function<T, R> consumer) {
-        Objects.requireNonNull(consumer);
-
         return closeable -> Try.apply(() -> {
             try (T in = closeable) {
                 return consumer.apply(in);
@@ -232,8 +229,6 @@ public abstract class Try<T> {
      * @return a {@code Try} object (an instance of either {@link Success} or {@link Failure}
      */
     public static <T> Try<T> apply(FailableSupplier<T> supplier) {
-        Objects.requireNonNull(supplier);
-
         try {
             return new Success<>(supplier.get());
         } catch (Throwable e) {
@@ -245,14 +240,13 @@ public abstract class Try<T> {
     /**
      * Converts a {@code Try<Try<T>>} to a {@code Try<T>}.
      *
-     * @param t the {@code Try<Try<T>>} to be flattened.
+     * @param t   the {@code Try<Try<T>>} to be flattened.
      * @param <T> the type wrapped by {@code Try}
      * @return a {@code Try<T>}
      */
     public static <T> Try<T> join(Try<Try<T>> t) {
-        Objects.requireNonNull(t);
-
-        if (t instanceof Failure<?>) return ((Try<T>) t);
+        if (t == null) return ((Try<T>) new Failure<>(new NullPointerException("t is null")));
+        else if (t instanceof Failure<?>) return ((Try<T>) t);
         else return t.get();
     }
 
@@ -291,29 +285,21 @@ public abstract class Try<T> {
 
         @Override
         public void forEach(Consumer<? super T> action) {
-            Objects.requireNonNull(action);
-
             action.accept(value);
         }
 
         @Override
         public <U> Try<U> map(Function<? super T, ? extends U> mapper) {
-            Objects.requireNonNull(mapper);
-
             return Try.apply(() -> mapper.apply(value));
         }
 
         @Override
         public <U> Try<U> flatMap(Function<? super T, ? extends Try<U>> mapper) {
-            Objects.requireNonNull(mapper);
-
             return Try.join(Try.apply(() -> mapper.apply(value)));
         }
 
         @Override
         public Try<T> filter(Predicate<? super T> predicate) {
-            Objects.requireNonNull(predicate);
-
             return Try.join(Try.apply(() ->
                     {
                         if (predicate.test(value)) {
@@ -360,9 +346,7 @@ public abstract class Try<T> {
         @Override
         public <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
                                     Function<Throwable, ? extends Try<U>> failureFunc) {
-            Objects.requireNonNull(successFunc);
-
-            return successFunc.apply(value);
+            return Try.join(Try.apply(() -> successFunc.apply(value)));
         }
 
         @Override
@@ -373,7 +357,6 @@ public abstract class Try<T> {
             Success success = (Success) o;
 
             return value.equals(success.value);
-
         }
 
         @Override
@@ -447,15 +430,11 @@ public abstract class Try<T> {
 
         @Override
         public <U> Try<U> recover(Function<? super Throwable, ? extends U> recoverFunc) {
-            Objects.requireNonNull(recoverFunc);
-
             return Try.apply(() -> recoverFunc.apply(exception));
         }
 
         @Override
         public <U> Try<U> recoverWith(Function<? super Throwable, ? extends Try<U>> recoverFunc) {
-            Objects.requireNonNull(recoverFunc);
-
             return Try.join(Try.apply(() -> recoverFunc.apply(exception)));
         }
 
@@ -482,9 +461,7 @@ public abstract class Try<T> {
         @Override
         public <U> Try<U> transform(Function<? super T, ? extends Try<U>> successFunc,
                                     Function<Throwable, ? extends Try<U>> failureFunc) {
-            Objects.requireNonNull(failureFunc);
-
-            return failureFunc.apply(exception);
+            return Try.join(Try.apply(() -> failureFunc.apply(exception)));
         }
 
         @Override
